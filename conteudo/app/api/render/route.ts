@@ -8,12 +8,6 @@ import { specToHtml, W, H, PoseMap } from "@/lib/template";
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
-/**
- * POST /api/render
- * body: { carousel_id?, spec }
- * Renderiza os slides em PNG 1080x1350, sobe no Storage e devolve as URLs.
- * Se vier carousel_id, grava uma nova versão no banco.
- */
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -26,8 +20,7 @@ export async function POST(req: Request) {
       poses[p.name] = { url: data.publicUrl, style: p.style || undefined };
     }
 
-    const base = new URL(req.url).origin;
-    const html = specToHtml(spec, poses, base);
+    const html = specToHtml(spec, poses);
 
     const browser = await puppeteer.launch({
       args: chromium.args,
@@ -36,7 +29,7 @@ export async function POST(req: Request) {
       defaultViewport: { width: W, height: H },
     });
     const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: "networkidle0" });
+    await page.setContent(html, { waitUntil: "load" });
     await page.evaluate(() => (document as any).fonts.ready);
 
     const stamp = Date.now();
