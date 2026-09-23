@@ -6,9 +6,12 @@ import { Spec } from "@/lib/spec";
 import { specToHtml, W, H, PoseMap } from "@/lib/template";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// Fluid compute no Hobby permite até 300s. Com 60s o render de 7 slides estourava.
+export const maxDuration = 300;
 
 export async function POST(req: Request) {
+  const t0 = Date.now();
+  const log = (etapa: string) => console.log(`[render] ${etapa} ${Date.now() - t0}ms`);
   try {
     const body = await req.json();
     const spec = Spec.parse(body.spec);
@@ -28,21 +31,28 @@ export async function POST(req: Request) {
       headless: true,
       defaultViewport: { width: W, height: H },
     });
+    log("chromium aberto");
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "load" });
     await page.evaluate(() => (document as any).fonts.ready);
 
     const stamp = Date.now();
-    const urls: string[] = [];
     const cards = await page.$$(".s");
-    for (let i = 0; i < cards.length; i++) {
-      const png = (await cards[i].screenshot({ type: "png" })) as Buffer;
-      const path = `${spec.slug}/${stamp}/${String(i + 1).padStart(2, "0")}.png`;
-      const up = await db.storage.from(BUCKET).upload(path, png, { contentType: "image/png", upsert: true });
-      if (up.error) throw new Error("upload: " + up.error.message);
-      urls.push(db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl);
-    }
+    const pngs: Buffer[] = [];
+    for (const card of cards) pngs.push((await card.screenshot({ type: "png" })) as Buffer);
     await browser.close();
+    log(`${pngs.length} prints`);
+
+    // Uploads em paralelo: em série, a latência de rede somava ~2s por slide.
+    const urls = await Promise.all(
+      pngs.map(async (png, i) => {
+        const path = `${spec.slug}/${stamp}/${String(i + 1).padStart(2, "0")}.png`;
+        const up = await db.storage.from(BUCKET).upload(path, png, { contentType: "image/png", upsert: true });
+        if (up.error) throw new Error("upload: " + up.error.message);
+        return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
+      })
+    );
+    log("uploads");
 
     let version: number | null = null;
     if (body.carousel_id) {
@@ -54,21 +64,25 @@ export async function POST(req: Request) {
         .limit(1)
         .maybeSingle();
       version = (last?.version || 0) + 1;
-      await db.from("carousel_versions").insert({
+      const ins = await db.from("carousel_versions").insert({
         carousel_id: body.carousel_id,
         version,
         spec,
         png_paths: urls,
         origin: body.origin || "gerado",
       });
-      await db
+      if (ins.error) throw new Error("versão: " + ins.error.message);
+      const upd = await db
         .from("carousels")
         .update({ current_version: version, status: "em_revisao", caption: spec.caption })
         .eq("id", body.carousel_id);
+      if (upd.error) throw new Error("carrossel: " + upd.error.message);
     }
+    log("fim");
 
     return NextResponse.json({ ok: true, urls, version });
   } catch (e: any) {
+    console.error("[render] erro", e);
     return NextResponse.json({ erro: String(e?.message || e) }, { status: 500 });
   }
 }
