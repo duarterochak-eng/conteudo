@@ -35,6 +35,16 @@ SLIDES DE PASSO (step): NUNCA só título e corpo
 - Corpo do passo: 15 a 30 palavras, com um exemplo concreto de empresa pequena ("numa clínica, o agente confirma a consulta na véspera").
 - Título do passo: verbo + objeto concreto ("Escreva as 10 perguntas que mais chegam"), nada vago ("Monitore e ajuste").
 
+LIMITES DE ESPAÇO (o slide é 1080x1350; passou disso, corta)
+- Título de passo: no máximo 6 palavras.
+- items: 2 a 3 itens, cada um com no máximo 6 palavras. Com items, corpo de no máximo 20 palavras.
+- flow: 3 a 4 etapas, cada uma com 1 a 2 palavras ("Mensagem", "Agente", "Você").
+- chat: 2 a 3 balões, cada um com no máximo 18 palavras.
+
+PARA QUEM É (o dono, não o técnico)
+- O dono de PME decide e acompanha; ele não configura API, token nem integração.
+- Proibido ensinar passo técnico: "ative a API", "solicite acesso", "configure o webhook", "gere o token". Troque pela decisão do dono: "defina o horário", "escolha o que o agente responde", "decida quando ele te chama".
+
 PRECISÃO TÉCNICA (o público confia em quem não enrola)
 - Ninguém "treina o modelo". Diga "escreva as instruções", "dê exemplos de respostas", "conecte ao seu catálogo".
 - Nada de "revolucionar", "potencializar", "alavancar", "no mundo de hoje", "a IA chegou".
