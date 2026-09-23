@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 async function lerJson(r: Response) {
   const txt = await r.text();
@@ -18,6 +18,26 @@ export default function Revisao(props: any) {
   const [slide, setSlide] = useState<number | null>(null);
   const [status, setStatus] = useState(props.status);
   const [carregando, setCarregando] = useState(false);
+  const [aberto, setAberto] = useState<number | null>(null); // slide ampliado
+  const campo = useRef<HTMLTextAreaElement>(null);
+
+  // Teclado no modo ampliado: ← → navega, Esc fecha.
+  useEffect(() => {
+    if (aberto == null) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAberto(null);
+      if (e.key === "ArrowRight") setAberto((a) => (a == null ? a : Math.min(a + 1, urls.length - 1)));
+      if (e.key === "ArrowLeft") setAberto((a) => (a == null ? a : Math.max(a - 1, 0)));
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [aberto, urls.length]);
+
+  function ajustarEste(i: number) {
+    setSlide(i);
+    setAberto(null);
+    setTimeout(() => campo.current?.focus(), 50);
+  }
 
   async function enviar() {
     if (!txt.trim()) return;
@@ -66,10 +86,13 @@ export default function Revisao(props: any) {
         <div className="card">
           <div className="slides">
             {urls.map((u, i) => (
-              <div key={u} onClick={() => setSlide(i)} style={{ cursor: "pointer", outline: slide === i ? "2px solid var(--or)" : "none", borderRadius: 8 }}>
-                <img src={u} alt={"slide " + (i + 1)} />
-                <div className="muted" style={{ fontSize: 12, marginTop: 4 }}>
-                  slide {i + 1} {slide === i ? "· selecionado" : ""}
+              <div key={u} style={{ outline: slide === i ? "2px solid var(--or)" : "none", borderRadius: 8 }}>
+                <img src={u} alt={"slide " + (i + 1)} onClick={() => setAberto(i)} style={{ cursor: "zoom-in" }} />
+                <div className="row" style={{ fontSize: 12, marginTop: 4, justifyContent: "space-between" }}>
+                  <span className="muted">slide {i + 1}</span>
+                  <button className="btn" style={{ padding: "2px 8px", fontSize: 12 }} onClick={() => (slide === i ? setSlide(null) : setSlide(i))}>
+                    {slide === i ? "selecionado ✓" : "ajustar"}
+                  </button>
                 </div>
               </div>
             ))}
@@ -99,7 +122,7 @@ export default function Revisao(props: any) {
             ))}
             {!msgs.length && <span className="muted">Ex.: "aumenta o texto do slide 3", "a capa está fraca, deixa o gancho mais direto".</span>}
           </div>
-          <textarea rows={3} value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="O que você quer mudar?" />
+          <textarea ref={campo} rows={3} value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="O que você quer mudar?" />
           <div className="row">
             <button className="btn or" onClick={enviar} disabled={carregando}>
               {carregando ? "Ajustando…" : "Pedir ajuste"}
@@ -110,6 +133,24 @@ export default function Revisao(props: any) {
           </div>
         </div>
       </div>
+      {aberto != null && (
+        <div
+          onClick={() => setAberto(null)}
+          style={{ position: "fixed", inset: 0, background: "rgba(10,12,16,.88)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: 16 }}
+        >
+          <button className="btn" disabled={aberto === 0} onClick={(e) => { e.stopPropagation(); setAberto(aberto - 1); }} style={{ fontSize: 22, padding: "8px 14px" }}>‹</button>
+          <div onClick={(e) => e.stopPropagation()} style={{ display: "grid", gap: 10, justifyItems: "center" }}>
+            <img src={urls[aberto]} alt={"slide " + (aberto + 1)} style={{ maxHeight: "84vh", maxWidth: "min(90vw, 1080px)", borderRadius: 8, display: "block" }} />
+            <div className="row" style={{ gap: 8 }}>
+              <span style={{ color: "#fff", fontSize: 13 }}>slide {aberto + 1} de {urls.length}</span>
+              <button className="btn or" onClick={() => ajustarEste(aberto)}>Ajustar este slide</button>
+              <a className="btn" href={urls[aberto]} download target="_blank" rel="noreferrer">Abrir PNG</a>
+              <button className="btn" onClick={() => setAberto(null)}>Fechar (Esc)</button>
+            </div>
+          </div>
+          <button className="btn" disabled={aberto === urls.length - 1} onClick={(e) => { e.stopPropagation(); setAberto(aberto + 1); }} style={{ fontSize: 22, padding: "8px 14px" }}>›</button>
+        </div>
+      )}
     </div>
   );
 }
