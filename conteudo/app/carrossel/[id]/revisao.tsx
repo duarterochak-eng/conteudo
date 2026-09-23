@@ -1,6 +1,15 @@
 "use client";
 import { useState } from "react";
 
+async function lerJson(r: Response) {
+  const txt = await r.text();
+  try {
+    return JSON.parse(txt);
+  } catch {
+    throw new Error(r.status === 504 ? "tempo esgotado no servidor (504). Tente de novo." : `servidor respondeu ${r.status}: ${txt.slice(0, 80)}`);
+  }
+}
+
 export default function Revisao(props: any) {
   const [spec, setSpec] = useState(props.spec);
   const [urls, setUrls] = useState<string[]>(props.urls);
@@ -21,13 +30,13 @@ export default function Revisao(props: any) {
         method: "POST",
         body: JSON.stringify({ carousel_id: props.id, spec, instrucao, slide_index: slide }),
       });
-      const d1 = await r1.json();
+      const d1 = await lerJson(r1);
       if (!r1.ok) throw new Error(d1.erro);
       const r2 = await fetch("/api/render", {
         method: "POST",
         body: JSON.stringify({ carousel_id: props.id, spec: d1.spec, origin: "edicao_chat" }),
       });
-      const d2 = await r2.json();
+      const d2 = await lerJson(r2);
       if (!r2.ok) throw new Error(d2.erro);
       setSpec(d1.spec);
       setUrls(d2.urls);
