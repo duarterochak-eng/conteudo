@@ -1,6 +1,15 @@
 "use client";
 import { useState } from "react";
 
+async function lerJson(r: Response) {
+  const txt = await r.text();
+  try {
+    return JSON.parse(txt);
+  } catch {
+    throw new Error(r.status === 504 ? "tempo esgotado no servidor (504). Tente de novo." : `servidor respondeu ${r.status}: ${txt.slice(0, 80)}`);
+  }
+}
+
 export default function Novo() {
   const [tema, setTema] = useState("");
   const [provas, setProvas] = useState("");
@@ -16,7 +25,7 @@ export default function Novo() {
         method: "POST",
         body: JSON.stringify({ tema, provas: provas.split("\n").map((s) => s.trim()).filter(Boolean) }),
       });
-      const d1 = await r1.json();
+      const d1 = await lerJson(r1);
       if (!r1.ok) throw new Error(d1.erro);
 
       setMsg("Montando as imagens…");
@@ -24,7 +33,7 @@ export default function Novo() {
         method: "POST",
         body: JSON.stringify({ carousel_id: d1.carousel_id, spec: d1.spec }),
       });
-      const d2 = await r2.json();
+      const d2 = await lerJson(r2);
       if (!r2.ok) throw new Error(d2.erro);
 
       location.href = `/carrossel/${d1.carousel_id}`;
