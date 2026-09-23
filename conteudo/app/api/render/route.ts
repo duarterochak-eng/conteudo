@@ -35,6 +35,7 @@ export async function POST(req: Request) {
     const page = await browser.newPage();
     await page.setContent(html, { waitUntil: "load" });
     await page.evaluate(() => (document as any).fonts.ready);
+    await page.waitForSelector("body[data-fit=ok]", { timeout: 5000 }).catch(() => {});
 
     const stamp = Date.now();
     const cards = await page.$$(".s");
