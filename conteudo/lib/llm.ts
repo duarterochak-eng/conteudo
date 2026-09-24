@@ -9,6 +9,11 @@ import Anthropic from "@anthropic-ai/sdk";
  * Se um falhar (sobrecarga, limite grátis), tenta o próximo.
  */
 export async function askJson(system: string, user: string): Promise<any> {
+  return (await askJsonVia(system, user)).json;
+}
+
+/** Igual ao askJson, mas diz quem respondeu. `only` força um provedor (nova tentativa rápida). */
+export async function askJsonVia(system: string, user: string, only?: string): Promise<{ json: any; via: string }> {
   const todos: Record<string, [string | undefined, () => Promise<string>]> = {
     claude: [process.env.ANTHROPIC_API_KEY, () => viaClaude(system, user)],
     gemini: [process.env.GEMINI_API_KEY, () => viaGemini(system, user)],
@@ -17,7 +22,7 @@ export async function askJson(system: string, user: string): Promise<any> {
   };
   const ordem = (process.env.LLM_ORDER || "claude,gemini,openrouter,groq").split(",").map((x) => x.trim());
   const fila: [string, () => Promise<string>][] = ordem
-    .filter((n) => todos[n]?.[0])
+    .filter((n) => todos[n]?.[0] && (!only || n === only))
     .map((n) => [n, todos[n][1]]);
   if (!fila.length) throw new Error("Nenhuma chave de IA configurada na Vercel.");
 
@@ -30,7 +35,7 @@ export async function askJson(system: string, user: string): Promise<any> {
       if (!m) throw new Error("não devolveu JSON: " + raw.slice(0, 200));
       const json = JSON.parse(m[0]);
       console.log(`[llm] ${nome} ok ${Date.now() - t0}ms`);
-      return json;
+      return { json, via: nome };
     } catch (e: any) {
       console.error(`[llm] ${nome} falhou:`, e?.message || e);
       erros.push(`${nome}: ${String(e?.message || e).slice(0, 200)}`);
@@ -53,6 +58,7 @@ async function viaClaude(system: string, user: string) {
 /** Endpoint compatível com OpenAI; mesma forma de chamada do Groq. */
 async function viaOpenAICompat(url: string, key: string, body: Record<string, any>, nome: string) {
   const r = await fetch(url, {
+    signal: AbortSignal.timeout(35000), // modelo grátis travado não pode comer o tempo todo da função
     method: "POST",
     headers: { "content-type": "application/json", authorization: `Bearer ${key}` },
     body: JSON.stringify(body),
@@ -105,7 +111,7 @@ async function viaGemini(system: string, user: string) {
  * OpenRouter grátis: tenta cada modelo da lista. Modelo grátis cai muito por sobrecarga
  * do provedor (429) ou devolve vazio; qualquer erro passa para o próximo.
  */
-const OR_PADRAO = "z-ai/glm-5.2:free,qwen/qwen3.8-27b:free,nvidia/nemotron-3-ultra-550b-a55b:free";
+const OR_PADRAO = "z-ai/glm-5.2:free,qwen/qwen3.8-27b:free";
 async function viaOpenRouter(system: string, user: string) {
   const modelos = (process.env.OPENROUTER_MODELS || OR_PADRAO).split(",").map((m) => m.trim()).filter(Boolean);
   let ultimo: any;
