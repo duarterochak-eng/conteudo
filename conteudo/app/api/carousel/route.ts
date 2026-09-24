@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/supabase";
 import { askJson } from "@/lib/llm";
 import { Spec } from "@/lib/spec";
+import { lint, normalizar } from "@/lib/lint";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -114,7 +115,25 @@ PALAVRA-CHAVE SUGERIDA: ${keyword || "escolha uma, curta e em CAIXA ALTA"}
 PROVAS DISPONÍVEIS: ${provas?.length ? provas.join(" | ") : "nenhuma"}
 POSES DISPONÍVEIS (campo photo): ${nomes}`;
 
-    const spec = Spec.parse(await askJson(SYSTEM, user));
+    let spec = normalizar(Spec.parse(await askJson(SYSTEM, user)));
+    let avisos = lint(spec);
+    if (avisos.length) {
+      // 1 nova tentativa com os erros apontados. Se piorar, fica com a primeira.
+      console.log("[lint] 1a versao:", avisos.join(" / "));
+      try {
+        const fix = `${user}
+
+VOCÊ JÁ GEROU ESTE JSON:
+${JSON.stringify(spec)}
+
+ELE QUEBRA ESTAS REGRAS. Corrija TODAS e devolva o JSON completo:
+- ${avisos.join("\n- ")}`;
+        const spec2 = normalizar(Spec.parse(await askJson(SYSTEM, fix)));
+        const avisos2 = lint(spec2);
+        if (avisos2.length < avisos.length) { spec = spec2; avisos = avisos2; }
+      } catch (e: any) { console.error("[lint] retry falhou", e?.message || e); }
+      if (avisos.length) console.log("[lint] sobrou:", avisos.join(" / "));
+    }
 
     const { data: pauta } = await db
       .from("pautas")
@@ -128,7 +147,7 @@ POSES DISPONÍVEIS (campo photo): ${nomes}`;
       .select("id")
       .single();
 
-    return NextResponse.json({ ok: true, carousel_id: car?.id, spec });
+    return NextResponse.json({ ok: true, carousel_id: car?.id, spec, avisos });
   } catch (e: any) {
     return NextResponse.json({ erro: String(e?.message || e) }, { status: 500 });
   }
