@@ -150,6 +150,15 @@ function person(photo: string | undefined, poses: PoseMap, fallbackStyle: string
   return `<div class="person" style="${p.style || fallbackStyle}"><img src="${p.url}"></div>`;
 }
 
+/** O carrossel usa "Comenta PALAVRA" só quando o CTA está nesse modo (premium). */
+const comenta = (spec: TSpec) => spec.slides.some((x: any) => x.type === "cta" && x.mode === "comenta");
+/** "Salva pra aplicar" -> última palavra grifada. */
+function tituloCta(t?: string) {
+  const txt = (t || "Salva pra aplicar").trim();
+  const i = txt.lastIndexOf(" ");
+  return i < 0 ? `<mark>${txt}</mark>` : `${txt.slice(0, i)}<br><mark>${txt.slice(i + 1)}</mark>`;
+}
+
 function slideHtml(s: TSlide, i: number, n: number, spec: TSpec, poses: PoseMap) {
   const handle = spec.handle;
   if (s.type === "cover") {
@@ -163,7 +172,7 @@ function slideHtml(s: TSlide, i: number, n: number, spec: TSpec, poses: PoseMap)
         <h1 style="font-size:${s.size}px;max-width:900px">${s.title}</h1>
         <div style="margin-top:22px;display:flex;gap:14px">
           ${s.tag ? `<span class="pill">${s.tag}</span>` : ""}
-          <span class="pill">Comenta <em>${spec.keyword}</em></span>
+          ${comenta(spec) ? `<span class="pill">Comenta <em>${spec.keyword}</em></span>` : ""}
         </div>
       </div>
       <div class="paper"></div></div>`;
@@ -174,11 +183,13 @@ function slideHtml(s: TSlide, i: number, n: number, spec: TSpec, poses: PoseMap)
       ${person(s.photo, poses, "right:-150px;bottom:0;width:640px")}
       <div class="lab" style="position:absolute;left:64px;top:64px;z-index:4">${s.eyebrow}</div>
       <div style="position:absolute;left:64px;top:150px;z-index:4;max-width:620px">
-        <h1 style="font-size:170px">Comenta<br><mark>${spec.keyword}</mark></h1>
+        ${s.mode === "comenta"
+          ? `<h1 style="font-size:170px">Comenta<br><mark>${spec.keyword}</mark></h1>`
+          : `<h1 style="font-size:150px">${tituloCta(s.title)}</h1>`}
         <p class="body" style="margin-top:44px;font-size:36px">${s.sub}</p>
         <div class="list" style="margin-top:30px;gap:14px">${dl}</div>
       </div>
-      <div class="lab" style="position:absolute;left:64px;bottom:64px;z-index:4;color:var(--mute)">Salva pra aplicar depois · ${handle}</div>
+      <div class="lab" style="position:absolute;left:64px;bottom:64px;z-index:4;color:var(--mute)">${s.mode === "comenta" ? "Salva pra aplicar depois" : "Manda pro seu sócio"} · ${handle}</div>
       <div class="paper"></div></div>`;
   }
   // statement / step (ambos com moldura)

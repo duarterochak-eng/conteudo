@@ -65,6 +65,9 @@ export const SlideStep = z.object({
 
 export const SlideCta = z.object({
   type: z.literal("cta"),
+  // "salvar" = carrossel semanal (linha editorial). "comenta" = só no premium, com palavra-chave.
+  mode: z.enum(["salvar", "comenta"]).default("salvar"),
+  title: z.string().optional(), // título do CTA no modo salvar (padrão "Salva pra aplicar")
   eyebrow: z.string().default("Quer o material?"),
   sub: z.string().default("Te mando no direct:"),
   deliver: z.array(z.string()).min(1).max(4),
