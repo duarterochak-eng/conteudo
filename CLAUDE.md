@@ -27,13 +27,18 @@ O app Next.js fica em `conteudo/` (é o root directory na Vercel).
 | `app/api/edit` | Ajuste por instrução (slide ou carrossel inteiro) |
 | `app/api/diag` | Testa cada modelo e lista os modelos Gemini disponíveis |
 | `app/carrossel/[id]/revisao.tsx` | Tela de revisão: slides, chat, botões de ajuste rápido, aprovar |
+| `lib/formatos.ts` | Formatos (tese, passo_a_passo, mensagem_pronta, o_que_muda, bastidor, erros_comuns): estrutura dos 7 slides, regras, visuais e `lintDesligado` |
+| `lib/redacao.ts` | Redação comum (LLM → normalizar → lint → 1 nova tentativa), regras comuns e persona |
+| `lib/referencias.ts` | Ideias: leitura do vídeo/print (Gemini inline; Whisper ou visão do Groq como reserva) e ângulos |
+| `app/ideias` | Tela de Ideias: upload direto no Storage (`/api/upload-url`), leitura + ângulos (`/api/ideias`, streaming), aprovar/descartar |
+| `app/api/ideias/[pauta_id]/aprovar` | Redação da ideia aprovada (formato + capa + fatos). O navegador chama o render depois |
 | `sql/001_schema.sql` | Schema. `carousel_versions.origin` aceita só: gerado, edicao_chat, edicao_manual, revert |
 
 ## Infra
 
 - Vercel: projeto `conteudo` (prj_wLsLoS2fhe7vpyExUfF3E8Xm2Arn, team_UF6sjp2W3MkxvJVyVikjehlT). URL: conteudo-ruddy.vercel.app (com senha).
-- Supabase: projeto dpchdhvosgdlvqvszoin (separado da Mydra). Buckets `carrosseis` e `poses`.
-- Variáveis na Vercel: SUPABASE_URL, SUPABASE_SERVICE_KEY, APP_PASSWORD, GROQ_API_KEY, GROQ_MODEL, GEMINI_API_KEY, GEMINI_MODELS, OPENROUTER_API_KEY, OPENROUTER_MODELS, LLM_ORDER. Sem ANTHROPIC_API_KEY por enquanto (custo).
+- Supabase: projeto dpchdhvosgdlvqvszoin (separado da Mydra). Buckets `carrosseis`, `poses` e `referencias` (privado).
+- Variáveis na Vercel: SUPABASE_URL, SUPABASE_SERVICE_KEY, APP_PASSWORD, GROQ_API_KEY, GROQ_MODEL, GROQ_VISION_MODEL (opcional), GEMINI_API_KEY, GEMINI_MODELS, OPENROUTER_API_KEY, OPENROUTER_MODELS, LLM_ORDER. Sem ANTHROPIC_API_KEY por enquanto (custo).
 - Só modelos grátis. Em 24/09: Groq gpt-oss-120b e Nemotron Super estáveis; Gemini 3.8 e GLM/Qwen grátis caem por lotação.
 
 ## Template (aprovado, não mudar sem pedido)

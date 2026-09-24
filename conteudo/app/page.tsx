@@ -39,7 +39,10 @@ export default async function Home({ searchParams }: { searchParams: Promise<{ v
 
   return (
     <div className="wrap">
-      <h1>Esteira</h1>
+      <div className="row" style={{ justifyContent: "space-between" }}>
+        <h1>Esteira</h1>
+        <Link href="/ideias" className="btn" style={{ padding: "6px 14px", textDecoration: "none" }}>Ideias</Link>
+      </div>
       <Novo />
       {ultimo && (
         <Link href={`/carrossel/${ultimo.id}`} className="card row" style={{ marginTop: 18, flexWrap: "nowrap", alignItems: "flex-start", textDecoration: "none", gap: 16 }}>

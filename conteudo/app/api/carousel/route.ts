@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/supabase";
-import { askJsonVia } from "@/lib/llm";
-import { Spec } from "@/lib/spec";
-import { lint, normalizar } from "@/lib/lint";
+import { redigir, posesDisponiveis } from "@/lib/redacao";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -108,36 +106,14 @@ export async function POST(req: Request) {
   try {
     const { tema, keyword, provas, slot_date } = await req.json();
 
-    const { data: poses } = await db.from("avatar_poses").select("name,tags").eq("active", true);
-    const nomes = (poses || []).map((p: any) => `${p.name} (${(p.tags || []).join(", ")})`).join(" · ") || "nenhuma";
+    const nomes = await posesDisponiveis();
 
     const user = `TEMA: ${tema}
 PALAVRA-CHAVE SUGERIDA: ${keyword || "escolha uma, curta e em CAIXA ALTA"}
 PROVAS DISPONÍVEIS: ${provas?.length ? provas.join(" | ") : "nenhuma"}
 POSES DISPONÍVEIS (campo photo): ${nomes}`;
 
-    const t0 = Date.now();
-    const r1 = await askJsonVia(SYSTEM, user);
-    let spec = normalizar(Spec.parse(r1.json));
-    let avisos = lint(spec);
-    // Nova tentativa só no mesmo modelo que respondeu e só se sobrar tempo.
-    if (avisos.length && Date.now() - t0 < 90000) {
-      // 1 nova tentativa com os erros apontados. Se piorar, fica com a primeira.
-      console.log("[lint] 1a versao:", avisos.join(" / "));
-      try {
-        const fix = `${user}
-
-VOCÊ JÁ GEROU ESTE JSON:
-${JSON.stringify(spec)}
-
-ELE QUEBRA ESTAS REGRAS. Corrija TODAS e devolva o JSON completo:
-- ${avisos.join("\n- ")}`;
-        const spec2 = normalizar(Spec.parse((await askJsonVia(SYSTEM, fix, r1.via)).json));
-        const avisos2 = lint(spec2);
-        if (avisos2.length < avisos.length) { spec = spec2; avisos = avisos2; }
-      } catch (e: any) { console.error("[lint] retry falhou", e?.message || e); }
-      if (avisos.length) console.log("[lint] sobrou:", avisos.join(" / "));
-    }
+    const { spec, avisos } = await redigir(SYSTEM, user);
 
     const { data: pauta } = await db
       .from("pautas")

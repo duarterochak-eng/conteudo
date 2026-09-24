@@ -79,7 +79,7 @@ const passageiro = (e: any) => / (429|500|502|503|504):|timeout|aborted/i.test(S
  * Tenta cada modelo; em sobrecarga (429/503) espera e tenta mais 1 vez antes de pular.
  * Para quando passa do prazo, para sobrar tempo pros próximos provedores.
  */
-async function emFila(nome: string, modelos: string[], chamar: (m: string) => Promise<string>, prazoMs: number) {
+export async function emFila(nome: string, modelos: string[], chamar: (m: string) => Promise<string>, prazoMs: number) {
   const t0 = Date.now();
   let ultimo: any = new Error(nome + ": nenhum modelo");
   for (const m of modelos) {
