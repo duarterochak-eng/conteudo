@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/supabase";
-import { askJson } from "@/lib/llm";
+import { askJsonVia } from "@/lib/llm";
 import { Spec } from "@/lib/spec";
 import { lint, normalizar } from "@/lib/lint";
 
 export const runtime = "nodejs";
-export const maxDuration = 120;
+export const maxDuration = 300;
 
 const SYSTEM = `Você escreve carrosséis de Instagram para um perfil que fala com DONOS DE PEQUENAS E MÉDIAS EMPRESAS sobre IA aplicada à operação (atendimento, vendas, cobrança, processos).
 
@@ -115,9 +115,12 @@ PALAVRA-CHAVE SUGERIDA: ${keyword || "escolha uma, curta e em CAIXA ALTA"}
 PROVAS DISPONÍVEIS: ${provas?.length ? provas.join(" | ") : "nenhuma"}
 POSES DISPONÍVEIS (campo photo): ${nomes}`;
 
-    let spec = normalizar(Spec.parse(await askJson(SYSTEM, user)));
+    const t0 = Date.now();
+    const r1 = await askJsonVia(SYSTEM, user);
+    let spec = normalizar(Spec.parse(r1.json));
     let avisos = lint(spec);
-    if (avisos.length) {
+    // Nova tentativa só no mesmo modelo que respondeu e só se sobrar tempo.
+    if (avisos.length && Date.now() - t0 < 90000) {
       // 1 nova tentativa com os erros apontados. Se piorar, fica com a primeira.
       console.log("[lint] 1a versao:", avisos.join(" / "));
       try {
@@ -128,7 +131,7 @@ ${JSON.stringify(spec)}
 
 ELE QUEBRA ESTAS REGRAS. Corrija TODAS e devolva o JSON completo:
 - ${avisos.join("\n- ")}`;
-        const spec2 = normalizar(Spec.parse(await askJson(SYSTEM, fix)));
+        const spec2 = normalizar(Spec.parse((await askJsonVia(SYSTEM, fix, r1.via)).json));
         const avisos2 = lint(spec2);
         if (avisos2.length < avisos.length) { spec = spec2; avisos = avisos2; }
       } catch (e: any) { console.error("[lint] retry falhou", e?.message || e); }
