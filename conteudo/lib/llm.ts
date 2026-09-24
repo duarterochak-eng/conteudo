@@ -57,21 +57,41 @@ async function viaOpenAICompat(url: string, key: string, body: Record<string, an
   return txt as string;
 }
 
+/**
+ * Gemini gratuito às vezes responde 503 (sobrecarga). Tenta o modelo principal,
+ * depois irmãos também gratuitos, antes de desistir e cair pro Groq.
+ */
 async function viaGemini(system: string, user: string) {
-  return viaOpenAICompat(
-    "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
-    process.env.GEMINI_API_KEY!,
-    {
-      model: process.env.GEMINI_MODEL || "gemini-3.8-flash",
-      reasoning_effort: "low", // pensamento curto: mantém a geração rápida (limite da função na Vercel)
-      max_tokens: 8000,
-      messages: [
-        { role: "system", content: system },
-        { role: "user", content: user },
-      ],
-    },
-    "Gemini"
-  );
+  const modelos = [process.env.GEMINI_MODEL || "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
+  const unicos = modelos.filter((m, i) => modelos.indexOf(m) === i);
+  let ultimo: any;
+  for (const model of unicos) {
+    try {
+      const txt = await viaOpenAICompat(
+        "https://generativelanguage.googleapis.com/v1beta/openai/chat/completions",
+        process.env.GEMINI_API_KEY!,
+        {
+          model,
+          reasoning_effort: "low", // pensamento curto: mantém a geração rápida (limite da função na Vercel)
+          max_tokens: 8000,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ],
+        },
+        "Gemini " + model
+      );
+      console.log(`[llm] gemini modelo ${model}`);
+      return txt;
+    } catch (e: any) {
+      ultimo = e;
+      const msg = String(e?.message || e);
+      // Só troca de modelo em sobrecarga/limite; erro de chave ou de pedido não adianta repetir.
+      if (!/ 503| 429| 500/.test(msg)) throw e;
+      console.error(`[llm] ${model} indisponível, tentando o próximo`);
+    }
+  }
+  throw ultimo;
 }
 
 async function viaGroq(system: string, user: string) {
