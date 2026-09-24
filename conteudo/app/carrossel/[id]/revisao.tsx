@@ -11,8 +11,8 @@ async function lerJson(r: Response) {
 }
 
 /**
- * Ajustes rápidos. "instrucao" vai pro /api/edit (IA). "local" muda o JSON direto,
- * sem IA: é instantâneo e não depende de modelo grátis estar no ar.
+ * Ajustes rápidos. "local" muda o JSON direto, sem IA: é instantâneo e não depende de modelo grátis estar no ar.
+ * "instrucao" é marcador: clicar só marca; "Pedir ajuste" junta os marcados com o texto e manda pro /api/edit (IA).
  */
 type Chip = { rotulo: string; instrucao?: string; local?: (spec: any, i: number | null) => any; slide?: number };
 const clamp = (n: number) => Math.max(70, Math.min(190, n));
@@ -58,11 +58,15 @@ export default function Revisao(props: any) {
   const [urls, setUrls] = useState<string[]>(props.urls);
   const [msgs, setMsgs] = useState<any[]>(props.mensagens);
   const [txt, setTxt] = useState("");
+  const [marcados, setMarcados] = useState<string[]>([]); // rótulos dos chips com instrucao
   const [slide, setSlide] = useState<number | null>(null);
   const [status, setStatus] = useState(props.status);
   const [carregando, setCarregando] = useState(false);
   const [aberto, setAberto] = useState<number | null>(null); // slide ampliado
   const campo = useRef<HTMLTextAreaElement>(null);
+
+  // A lista de chips muda entre carrossel e slide: marcador não sobrevive à troca.
+  useEffect(() => setMarcados([]), [slide]);
 
   // Teclado no modo ampliado: ← → navega, Esc fecha.
   useEffect(() => {
@@ -94,28 +98,45 @@ export default function Revisao(props: any) {
     return d2.version;
   }
 
-  async function enviar(chip?: Chip) {
-    const instrucao = chip ? chip.instrucao : txt;
-    if (!chip && !txt.trim()) return;
-    if (carregando) return;
-    const alvo = chip?.slide ?? slide;
+  function marcar(c: Chip) {
+    setMarcados((m) => (m.includes(c.rotulo) ? m.filter((r) => r !== c.rotulo) : [...m, c.rotulo]));
+  }
+
+  async function aplicarLocal(chip: Chip) {
+    if (carregando || !chip.local) return;
     setCarregando(true);
-    setMsgs((m) => [...m, { role: "user", content: chip ? "⚡ " + chip.rotulo : txt, slide_index: alvo }]);
-    if (!chip) setTxt("");
+    setMsgs((m) => [...m, { role: "user", content: "⚡ " + chip.rotulo, slide_index: slide }]);
     try {
-      if (chip?.local) {
-        const v = await renderizar(chip.local(spec, alvo), "edicao_manual");
-        setMsgs((m) => [...m, { role: "assistant", content: `${chip.rotulo}: feito (versão ${v}).` }]);
-      } else {
-        const r1 = await fetch("/api/edit", {
-          method: "POST",
-          body: JSON.stringify({ carousel_id: props.id, spec, instrucao, slide_index: alvo }),
-        });
-        const d1 = await lerJson(r1);
-        if (!r1.ok) throw new Error(d1.erro);
-        const v = await renderizar(d1.spec, "edicao_chat");
-        setMsgs((m) => [...m, { role: "assistant", content: (d1.resumo || "Ajuste aplicado.") + " (versão " + v + ")" }]);
-      }
+      const v = await renderizar(chip.local(spec, slide), "edicao_manual");
+      setMsgs((m) => [...m, { role: "assistant", content: `${chip.rotulo}: feito (versão ${v}).` }]);
+    } catch (e: any) {
+      setMsgs((m) => [...m, { role: "assistant", content: "Erro: " + e.message }]);
+    }
+    setCarregando(false);
+  }
+
+  async function enviar() {
+    if (carregando) return;
+    const lista = (slide == null ? CHIPS_CARROSSEL : CHIPS_SLIDE).filter((c) => c.instrucao && marcados.includes(c.rotulo));
+    const detalhe = txt.trim();
+    if (!lista.length && !detalhe) return;
+    const base = lista.map((c) => c.instrucao).join("\n");
+    const instrucao = !lista.length ? txt : !detalhe ? base : `${base}\nDetalhes do Kawan (prioridade sobre as instruções acima): ${detalhe}`;
+    const alvo = slide ?? lista.find((c) => c.slide != null)?.slide ?? null;
+    const conteudo = lista.length ? "⚡ " + [...lista.map((c) => c.rotulo), ...(detalhe ? [detalhe] : [])].join(" · ") : txt;
+    setCarregando(true);
+    setMsgs((m) => [...m, { role: "user", content: conteudo, slide_index: alvo }]);
+    setTxt("");
+    setMarcados([]);
+    try {
+      const r1 = await fetch("/api/edit", {
+        method: "POST",
+        body: JSON.stringify({ carousel_id: props.id, spec, instrucao, slide_index: alvo }),
+      });
+      const d1 = await lerJson(r1);
+      if (!r1.ok) throw new Error(d1.erro);
+      const v = await renderizar(d1.spec, "edicao_chat");
+      setMsgs((m) => [...m, { role: "assistant", content: (d1.resumo || "Ajuste aplicado.") + " (versão " + v + ")" }]);
     } catch (e: any) {
       setMsgs((m) => [...m, { role: "assistant", content: "Erro: " + e.message }]);
     }
@@ -178,20 +199,23 @@ export default function Revisao(props: any) {
             {!msgs.length && <span className="muted">Ex.: "aumenta o texto do slide 3", "a capa está fraca, deixa o gancho mais direto".</span>}
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
-            {(slide == null ? CHIPS_CARROSSEL : CHIPS_SLIDE).map((c) => (
-              <button
-                key={c.rotulo}
-                className="btn"
-                disabled={carregando}
-                title={c.instrucao || "Aplicado direto, sem IA"}
-                onClick={() => enviar(c)}
-                style={{ padding: "4px 10px", fontSize: 12, borderRadius: 99 }}
-              >
-                {c.rotulo}
-              </button>
-            ))}
+            {(slide == null ? CHIPS_CARROSSEL : CHIPS_SLIDE).map((c) => {
+              const on = !c.local && marcados.includes(c.rotulo);
+              return (
+                <button
+                  key={c.rotulo}
+                  className="btn"
+                  disabled={carregando}
+                  title={c.instrucao || "Aplicado direto, sem IA"}
+                  onClick={() => (c.local ? aplicarLocal(c) : marcar(c))}
+                  style={{ padding: "4px 10px", fontSize: 12, borderRadius: 99, ...(on ? { borderColor: "var(--or)", color: "var(--or)" } : {}) }}
+                >
+                  {c.rotulo}
+                </button>
+              );
+            })}
           </div>
-          <textarea ref={campo} rows={3} value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="O que você quer mudar?" />
+          <textarea ref={campo} rows={3} value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="Detalhe o ajuste (opcional se marcou um botão acima)" />
           <div className="row">
             <button className="btn or" onClick={() => enviar()} disabled={carregando}>
               {carregando ? "Ajustando…" : "Pedir ajuste"}
