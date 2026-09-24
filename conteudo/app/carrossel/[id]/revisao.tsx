@@ -1,156 +1,97 @@
-"use client";
-import { useEffect, useRef, useState } from "react";
+import { NextResponse } from "next/server";
+import { db } from "@/lib/supabase";
+import { askJson } from "@/lib/llm";
+import { Spec, Slide } from "@/lib/spec";
 
-async function lerJson(r: Response) {
-  const txt = await r.text();
+export const runtime = "nodejs";
+export const maxDuration = 60;
+
+const REGRAS = `COMO INTERPRETAR O PEDIDO
+- A instrução é a INTENÇÃO do dono, não texto para colar. Gíria vira ação:
+  "sem graça", "falta molho", "tá fraco" = deixar mais forte e visual; nunca escreva essas palavras no slide.
+  Só copie texto literal quando vier entre aspas.
+- "falta cor" / "mais cor": use <em>palavra</em> (laranja) ou <mark>palavra</mark> (grifo) em 1 ou 2 palavras-chave do título ou corpo; em flow, ponha flow_on na etapa principal.
+- "mais visual": troque parágrafo por items, flow ou chat.
+- "texto maior/menor": ajuste o campo size (70 a 190).
+- "gancho mais forte": título mais curto, com tensão ou resultado concreto.
+- Se o pedido for sobre layout que o JSON não controla (posição, fundo, fonte), faça o melhor com os campos disponíveis e diga no resumo o que não dá para mudar.
+
+LIMITES
+- Título de passo: até 6 palavras. Corpo: até 28 palavras (até 20 se houver items).
+- items: 2 a 3, até 6 palavras cada. flow: 3 a 4 etapas de 1 a 2 palavras. chat: 2 a 3 balões de até 18 palavras.
+- No máximo 2 <em>/<mark> por slide.
+- NUNCA invente números, resultados, clientes ou datas.
+- Português do Brasil, direto, sem emoji.
+
+RESUMO
+- "resumo": uma frase curta dizendo o que você mudou ("Grifei 'atendente' e destaquei a etapa Agente no fluxo").`;
+
+const SYSTEM_SLIDE = `Você edita UM slide de um carrossel de Instagram (JSON).
+Responda APENAS com: {"slide":{...o slide editado, mesmo "type"...},"resumo":"..."}
+
+${REGRAS}`;
+
+const SYSTEM_TUDO = `Você edita o JSON de um carrossel de Instagram.
+Responda APENAS com: {"spec":{...o carrossel completo...},"resumo":"..."}
+Mude só o que a instrução pede e mantenha o resto idêntico.
+
+${REGRAS}`;
+
+/**
+ * POST /api/edit
+ * body: { carousel_id, spec, instrucao, slide_index? }
+ * Com slide_index, o modelo recebe e devolve SÓ aquele slide, e o servidor encaixa no lugar certo.
+ * (Antes o modelo recebia o carrossel inteiro e às vezes editava o slide vizinho.)
+ */
+export async function POST(req: Request) {
   try {
-    return JSON.parse(txt);
-  } catch {
-    throw new Error(r.status === 504 ? "tempo esgotado no servidor (504). Tente de novo." : `servidor respondeu ${r.status}: ${txt.slice(0, 80)}`);
-  }
-}
+    const { carousel_id, spec, instrucao, slide_index } = await req.json();
+    const atual = Spec.parse(spec);
+    let novo;
+    let resumo = "Ajuste aplicado.";
 
-export default function Revisao(props: any) {
-  const [spec, setSpec] = useState(props.spec);
-  const [urls, setUrls] = useState<string[]>(props.urls);
-  const [msgs, setMsgs] = useState<any[]>(props.mensagens);
-  const [txt, setTxt] = useState("");
-  const [slide, setSlide] = useState<number | null>(null);
-  const [status, setStatus] = useState(props.status);
-  const [carregando, setCarregando] = useState(false);
-  const [aberto, setAberto] = useState<number | null>(null); // slide ampliado
-  const campo = useRef<HTMLTextAreaElement>(null);
+    if (slide_index != null && atual.slides[slide_index]) {
+      const alvo = atual.slides[slide_index];
+      const user = `SLIDE ATUAL (${slide_index + 1} de ${atual.slides.length}, palavra-chave do carrossel: ${atual.keyword}):
+${JSON.stringify(alvo)}
 
-  // Teclado no modo ampliado: ← → navega, Esc fecha.
-  useEffect(() => {
-    if (aberto == null) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setAberto(null);
-      if (e.key === "ArrowRight") setAberto((a) => (a == null ? a : Math.min(a + 1, urls.length - 1)));
-      if (e.key === "ArrowLeft") setAberto((a) => (a == null ? a : Math.max(a - 1, 0)));
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [aberto, urls.length]);
+INSTRUÇÃO:
+${instrucao}`;
+      const r = await askJson(SYSTEM_SLIDE, user);
+      const editado = Slide.parse(r.slide ?? r);
+      if (editado.type !== alvo.type) throw new Error("o modelo trocou o tipo do slide; tente de novo");
+      const slides = [...atual.slides];
+      slides[slide_index] = editado;
+      novo = Spec.parse({ ...atual, slides });
+      if (typeof r.resumo === "string") resumo = r.resumo;
+    } else {
+      const user = `JSON ATUAL:
+${JSON.stringify(atual)}
 
-  function ajustarEste(i: number) {
-    setSlide(i);
-    setAberto(null);
-    setTimeout(() => campo.current?.focus(), 50);
-  }
-
-  async function enviar() {
-    if (!txt.trim()) return;
-    setCarregando(true);
-    setMsgs([...msgs, { role: "user", content: txt, slide_index: slide }]);
-    const instrucao = txt;
-    setTxt("");
-    try {
-      const r1 = await fetch("/api/edit", {
-        method: "POST",
-        body: JSON.stringify({ carousel_id: props.id, spec, instrucao, slide_index: slide }),
-      });
-      const d1 = await lerJson(r1);
-      if (!r1.ok) throw new Error(d1.erro);
-      const r2 = await fetch("/api/render", {
-        method: "POST",
-        body: JSON.stringify({ carousel_id: props.id, spec: d1.spec, origin: "edicao_chat" }),
-      });
-      const d2 = await lerJson(r2);
-      if (!r2.ok) throw new Error(d2.erro);
-      setSpec(d1.spec);
-      setUrls(d2.urls);
-      setMsgs((m) => [...m, { role: "assistant", content: "Pronto, atualizei. Versão " + d2.version }]);
-    } catch (e: any) {
-      setMsgs((m) => [...m, { role: "assistant", content: "Erro: " + e.message }]);
+INSTRUÇÃO:
+${instrucao}`;
+      const r = await askJson(SYSTEM_TUDO, user);
+      novo = Spec.parse(r.spec ?? r);
+      if (typeof r.resumo === "string") resumo = r.resumo;
     }
-    setCarregando(false);
+
+    if (carousel_id) {
+      await db.from("review_messages").insert([
+        { carousel_id, slide_index: slide_index ?? null, role: "user", content: instrucao },
+        { carousel_id, slide_index: slide_index ?? null, role: "assistant", content: resumo },
+      ]);
+      await db.from("editorial_events").insert({
+        entity: "carousel",
+        entity_id: carousel_id,
+        event: "edicao",
+        slide_index: slide_index ?? null,
+        instruction: instrucao,
+        diff: { antes: atual, depois: novo },
+      });
+    }
+
+    return NextResponse.json({ ok: true, spec: novo, resumo });
+  } catch (e: any) {
+    return NextResponse.json({ erro: String(e?.message || e) }, { status: 500 });
   }
-
-  async function aprovar() {
-    await fetch("/api/aprovar", { method: "POST", body: JSON.stringify({ carousel_id: props.id }) });
-    setStatus("aprovado");
-  }
-
-  return (
-    <div className="wrap">
-      <a href="/" className="muted" style={{ fontSize: 13 }}>← esteira</a>
-      <h1 style={{ marginTop: 8 }}>{props.titulo}</h1>
-      <div className="row" style={{ marginTop: 6 }}>
-        <span className="tag">{status}</span>
-        <span className="tag">palavra: {spec.keyword}</span>
-        <span className="tag">{urls.length} slides</span>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1.4fr 1fr", gap: 18, marginTop: 20, alignItems: "start" }}>
-        <div className="card">
-          <div className="slides">
-            {urls.map((u, i) => (
-              <div key={u} style={{ outline: slide === i ? "2px solid var(--or)" : "none", borderRadius: 8 }}>
-                <img src={u} alt={"slide " + (i + 1)} onClick={() => setAberto(i)} style={{ cursor: "zoom-in" }} />
-                <div className="row" style={{ fontSize: 12, marginTop: 4, justifyContent: "space-between" }}>
-                  <span className="muted">slide {i + 1}</span>
-                  <button className="btn" style={{ padding: "2px 8px", fontSize: 12 }} onClick={() => (slide === i ? setSlide(null) : setSlide(i))}>
-                    {slide === i ? "selecionado ✓" : "ajustar"}
-                  </button>
-                </div>
-              </div>
-            ))}
-          </div>
-          <details style={{ marginTop: 14 }}>
-            <summary className="muted">Legenda</summary>
-            <p style={{ whiteSpace: "pre-wrap", marginTop: 8 }}>{spec.caption}</p>
-          </details>
-        </div>
-
-        <div className="card" style={{ display: "grid", gap: 12 }}>
-          <h2>Revisão</h2>
-          <p className="muted" style={{ fontSize: 13, marginTop: -6 }}>
-            {slide == null ? "Falando do carrossel inteiro. Clique num slide para falar só dele." : `Falando do slide ${slide + 1}.`}
-            {slide != null && (
-              <button className="btn" style={{ padding: "2px 8px", marginLeft: 8, fontSize: 12 }} onClick={() => setSlide(null)}>
-                tirar seleção
-              </button>
-            )}
-          </p>
-          <div className="chatbox">
-            {msgs.map((m, i) => (
-              <div key={i} className={"msg " + (m.role === "user" ? "me" : "")}>
-                {m.slide_index != null && <span className="tag" style={{ marginRight: 6 }}>slide {m.slide_index + 1}</span>}
-                {m.content}
-              </div>
-            ))}
-            {!msgs.length && <span className="muted">Ex.: "aumenta o texto do slide 3", "a capa está fraca, deixa o gancho mais direto".</span>}
-          </div>
-          <textarea ref={campo} rows={3} value={txt} onChange={(e) => setTxt(e.target.value)} placeholder="O que você quer mudar?" />
-          <div className="row">
-            <button className="btn or" onClick={enviar} disabled={carregando}>
-              {carregando ? "Ajustando…" : "Pedir ajuste"}
-            </button>
-            <button className="btn primary" onClick={aprovar} disabled={status === "aprovado"}>
-              {status === "aprovado" ? "Aprovado" : "Aprovar"}
-            </button>
-          </div>
-        </div>
-      </div>
-      {aberto != null && (
-        <div
-          onClick={() => setAberto(null)}
-          style={{ position: "fixed", inset: 0, background: "rgba(10,12,16,.88)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, padding: 16 }}
-        >
-          <button className="btn" disabled={aberto === 0} onClick={(e) => { e.stopPropagation(); setAberto(aberto - 1); }} style={{ fontSize: 22, padding: "8px 14px" }}>‹</button>
-          <div onClick={(e) => e.stopPropagation()} style={{ display: "grid", gap: 10, justifyItems: "center" }}>
-            <img src={urls[aberto]} alt={"slide " + (aberto + 1)} style={{ maxHeight: "84vh", maxWidth: "min(90vw, 1080px)", borderRadius: 8, display: "block" }} />
-            <div className="row" style={{ gap: 8 }}>
-              <span style={{ color: "#fff", fontSize: 13 }}>slide {aberto + 1} de {urls.length}</span>
-              <button className="btn or" onClick={() => ajustarEste(aberto)}>Ajustar este slide</button>
-              <a className="btn" href={urls[aberto]} download target="_blank" rel="noreferrer">Abrir PNG</a>
-              <button className="btn" onClick={() => setAberto(null)}>Fechar (Esc)</button>
-            </div>
-          </div>
-          <button className="btn" disabled={aberto === urls.length - 1} onClick={(e) => { e.stopPropagation(); setAberto(aberto + 1); }} style={{ fontSize: 22, padding: "8px 14px" }}>›</button>
-        </div>
-      )}
-    </div>
-  );
 }
