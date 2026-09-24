@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 async function lerJson(r: Response) {
   const txt = await r.text();
@@ -11,6 +12,7 @@ async function lerJson(r: Response) {
 }
 
 export default function Novo() {
+  const router = useRouter();
   const [tema, setTema] = useState("");
   const [provas, setProvas] = useState("");
   const [msg, setMsg] = useState("");
@@ -36,11 +38,15 @@ export default function Novo() {
       const d2 = await lerJson(r2);
       if (!r2.ok) throw new Error(d2.erro);
 
-      location.href = `/carrossel/${d1.carousel_id}`;
+      // fica na esteira: o novo aparece no "Último gerado"
+      setTema("");
+      setProvas("");
+      setMsg("Pronto.");
     } catch (e: any) {
       setMsg("Erro: " + e.message);
-      setCarregando(false);
     }
+    setCarregando(false);
+    router.refresh();
   }
 
   return (
