@@ -20,7 +20,7 @@ const PROIBIDO: [RegExp, string][] = [
 ];
 
 // Trechos que só existem nos exemplos do prompt: se aparecem, o modelo copiou
-const COPIA = ["Gol 2012", "Auto Peças Silva", "João Silva", "99123-4567", "Faz mais barato", "Tem pra hoje", "Isso é robô", "o que acontece às 22h", "perguntas chatas", "Teste e ajuste", "Monitore e ajuste", "Orçamento #231"];
+const COPIA = ["Gol 2012", "Auto Peças Silva", "João Silva", "99123-4567", "Faz mais barato", "Tem pra hoje", "Isso é robô", "o que acontece às 22h", "perguntas chatas", "Teste e ajuste", "Monitore e ajuste", "Orçamento #231", "Não falta funcionário", "Não falta equipe", "Sobra retrabalho", "Seu WhatsApp vende enquanto você dorme", "O mesmo dado digitado", "Retorno que depende da memória", "CRM que ninguém atualiza"];
 
 export function lint(spec: TSpec): string[] {
   const p: string[] = [];
@@ -53,6 +53,7 @@ export function lint(spec: TSpec): string[] {
       if (s.items.every((x: string) => palavras(x) <= 4 && !/["?:\d]/.test(x))) p.push(`${n}: items parecem rótulos ("${s.items.map(limpo).join('", "')}"). Troque por conteúdo copiável (a frase pronta, a pergunta real, a regra exata) ou use outro visual.`);
     }
     if (s.flow?.length) {
+      if (s.flow.map((x: string) => x.toLowerCase().trim()).join(",") === "whatsapp,ia,crm,alerta") p.push(`${n}: fluxo copiado do exemplo do prompt (WhatsApp, IA, CRM, Alerta). Monte as etapas reais deste tema.`);
       if (s.flow.length < 3 || s.flow.length > 4) p.push(`${n}: flow com ${s.flow.length} etapas (use 3 a 4).`);
       s.flow.forEach((x: string) => palavras(x) > 2 && p.push(`${n}: etapa "${x}" com mais de 2 palavras.`));
     }

@@ -85,6 +85,7 @@ const PATHS: Record<string, string> = {
   dinheiro: "M3 7h18v10H3zM12 15a3 3 0 100-6 3 3 0 000 6z",
   check: "M5 12.5l4.5 4.5L19 7",
   x: "M6 6l12 12M18 6L6 18",
+  seta: "M4 12h15M13 6l6 6-6 6",
 };
 function icon(name: string | undefined, size = 34, color = "currentColor") {
   const d = PATHS[name || ""];
@@ -103,8 +104,8 @@ function visual(s: any): string {
   }
   if (s.compare) {
     const col = (c: any, bom: boolean) => `<div class="card ${bom ? "hot" : "ruim"}">
-      <h4>${icon(bom ? "check" : "alerta", 30, bom ? "var(--or)" : "var(--ink)")}${c.title}</h4>
-      ${c.items.map((x: string) => `<div class="it">${icon(bom ? "check" : "x", 28, bom ? "var(--or)" : "#8a857d")}<span>${x}</span></div>`).join("")}
+      <h4>${icon(bom ? "seta" : "alerta", 30, bom ? "var(--or)" : "var(--ink)")}${c.title}</h4>
+      ${c.items.map((x: string) => `<div class="it">${icon(bom ? "seta" : "x", 28, bom ? "var(--or)" : "#8a857d")}<span>${x}</span></div>`).join("")}
     </div>`;
     return `<div class="cmp">${col(s.compare.before, false)}${col(s.compare.after, true)}</div>`;
   }
