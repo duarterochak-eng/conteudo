@@ -19,7 +19,7 @@ body{width:${W}px;height:${H}px;background:var(--bg);overflow:hidden}
 .s{position:relative;width:${W}px;height:${H}px;overflow:hidden;background:var(--bg);color:var(--ink);font-family:Body}
 .paper{position:absolute;inset:0;opacity:.35;mix-blend-mode:multiply;z-index:8;pointer-events:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='400'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5  0 0 0 0 .48  0 0 0 0 .45  0 0 0 .55 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
 .lab{font-family:Cond;font-weight:700;font-size:26px;letter-spacing:.06em;text-transform:uppercase}
-h1,h2{font-family:Anton;font-weight:400;text-transform:uppercase;line-height:1.1;letter-spacing:-.01em}
+h1,h2{font-family:Anton;font-weight:400;text-transform:uppercase;line-height:1.2;letter-spacing:-.01em}
 em{font-style:normal;color:var(--or)}
 mark{background:linear-gradient(transparent 6%,var(--or) 6%,var(--or) 94%,transparent 94%);color:var(--ink);padding:0 .06em;-webkit-box-decoration-break:clone}
 .giant{position:absolute;left:0;right:0;text-align:center;font-family:Anton;color:var(--or);line-height:.8;text-transform:uppercase;z-index:1}
@@ -202,6 +202,7 @@ export function specToHtml(spec: TSpec, poses: PoseMap, _baseUrl?: string) {
     .join("\n")
     .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-")
     .replace(/\u00AD/g, "")
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, "") // emoji vira quadradinho na fonte
     .replace(/[\u00A0\u202F\u2007\u2009]/g, " ")
     .replace(/[\u201C\u201D\u201E]/g, '"')
     .replace(/[\u2018\u2019]/g, "'")

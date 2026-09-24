@@ -1,17 +1,24 @@
 import Anthropic from "@anthropic-ai/sdk";
 
 /**
- * Escolhe o modelo pela chave disponível, nesta ordem:
- *   1. ANTHROPIC_API_KEY  -> Claude (CLAUDE_MODEL, padrão claude-sonnet-5)
- *   2. GEMINI_API_KEY     -> Gemini (GEMINI_MODEL, padrão gemini-3.8-flash; tem plano gratuito)
- *   3. GROQ_API_KEY       -> Groq (GROQ_MODEL, padrão openai/gpt-oss-120b)
- * Se o escolhido falhar (limite do plano gratuito, fora do ar), tenta o próximo.
+ * Fila de modelos. Ordem padrão (muda com LLM_ORDER="gemini,openrouter,groq"):
+ *   claude     -> ANTHROPIC_API_KEY  (CLAUDE_MODEL, padrão claude-sonnet-5)
+ *   gemini     -> GEMINI_API_KEY     (só 3.8 e 3.7; o 3.5 escrevia mal e saiu)
+ *   openrouter -> OPENROUTER_API_KEY (modelos grátis, OPENROUTER_MODELS separados por vírgula)
+ *   groq       -> GROQ_API_KEY       (GROQ_MODEL, padrão openai/gpt-oss-120b)
+ * Se um falhar (sobrecarga, limite grátis), tenta o próximo.
  */
 export async function askJson(system: string, user: string): Promise<any> {
-  const fila: [string, () => Promise<string>][] = [];
-  if (process.env.ANTHROPIC_API_KEY) fila.push(["claude", () => viaClaude(system, user)]);
-  if (process.env.GEMINI_API_KEY) fila.push(["gemini", () => viaGemini(system, user)]);
-  if (process.env.GROQ_API_KEY) fila.push(["groq", () => viaGroq(system, user)]);
+  const todos: Record<string, [string | undefined, () => Promise<string>]> = {
+    claude: [process.env.ANTHROPIC_API_KEY, () => viaClaude(system, user)],
+    gemini: [process.env.GEMINI_API_KEY, () => viaGemini(system, user)],
+    openrouter: [process.env.OPENROUTER_API_KEY, () => viaOpenRouter(system, user)],
+    groq: [process.env.GROQ_API_KEY, () => viaGroq(system, user)],
+  };
+  const ordem = (process.env.LLM_ORDER || "claude,gemini,openrouter,groq").split(",").map((x) => x.trim());
+  const fila: [string, () => Promise<string>][] = ordem
+    .filter((n) => todos[n]?.[0])
+    .map((n) => [n, todos[n][1]]);
   if (!fila.length) throw new Error("Nenhuma chave de IA configurada na Vercel.");
 
   const erros: string[] = [];
@@ -62,7 +69,7 @@ async function viaOpenAICompat(url: string, key: string, body: Record<string, an
  * depois irmãos também gratuitos, antes de desistir e cair pro Groq.
  */
 async function viaGemini(system: string, user: string) {
-  const modelos = [process.env.GEMINI_MODEL || "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash"];
+  const modelos = [process.env.GEMINI_MODEL || "gemini-3.8-flash", "gemini-3.7-flash"];
   const unicos = modelos.filter((m, i) => modelos.indexOf(m) === i);
   let ultimo: any;
   for (const model of unicos) {
@@ -89,6 +96,41 @@ async function viaGemini(system: string, user: string) {
       // Só troca de modelo em sobrecarga/limite; erro de chave ou de pedido não adianta repetir.
       if (!/ 503| 429| 500/.test(msg)) throw e;
       console.error(`[llm] ${model} indisponível, tentando o próximo`);
+    }
+  }
+  throw ultimo;
+}
+
+/**
+ * OpenRouter grátis: tenta cada modelo da lista. Modelo grátis cai muito por sobrecarga
+ * do provedor (429) ou devolve vazio; qualquer erro passa para o próximo.
+ */
+const OR_PADRAO = "z-ai/glm-5.2:free,qwen/qwen3.8-27b:free,nvidia/nemotron-3-ultra-550b-a55b:free";
+async function viaOpenRouter(system: string, user: string) {
+  const modelos = (process.env.OPENROUTER_MODELS || OR_PADRAO).split(",").map((m) => m.trim()).filter(Boolean);
+  let ultimo: any;
+  for (const model of modelos) {
+    try {
+      const txt = await viaOpenAICompat(
+        "https://openrouter.ai/api/v1/chat/completions",
+        process.env.OPENROUTER_API_KEY!,
+        {
+          model,
+          temperature: 0.5,
+          max_tokens: 8000,
+          messages: [
+            { role: "system", content: system },
+            { role: "user", content: user },
+          ],
+        },
+        "OpenRouter " + model
+      );
+      if (!/\{[\s\S]*\}/.test(txt)) throw new Error("sem JSON");
+      console.log(`[llm] openrouter modelo ${model}`);
+      return txt;
+    } catch (e: any) {
+      ultimo = e;
+      console.error(`[llm] ${model} falhou, tentando o próximo:`, String(e?.message || e).slice(0, 200));
     }
   }
   throw ultimo;
