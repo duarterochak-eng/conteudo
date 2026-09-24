@@ -38,6 +38,7 @@ ESTRUTURA ALTERNATIVA: PASSO A PASSO (só quando o tema é "como fazer X")
 capa · problema · 4 passos (label "02 / PASSO 1"...) · cta, cada passo com um visual.
 
 REGRAS DE ESCRITA
+- O carrossel desenvolve o TEMA como foi escrito, a favor dele. Nunca argumente contra o tema (tema "vários agentes na empresa" não vira "um agente só resolve").
 - Os exemplos deste prompt são só referência de formato. NUNCA copie títulos, frases ou nomes deles; escreva do zero para o TEMA.
 - O corpo NUNCA repete o título com outras palavras. Ele acrescenta: a cena, o porquê ou onde o dono entra.
 - Slide com visual: título de até 7 palavras e corpo de até 15 palavras (ou vazio). O visual é o protagonista.
