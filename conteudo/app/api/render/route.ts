@@ -40,15 +40,15 @@ export async function POST(req: Request) {
     const stamp = Date.now();
     const cards = await page.$$(".s");
     const pngs: Buffer[] = [];
-    for (const card of cards) pngs.push((await card.screenshot({ type: "png" })) as Buffer);
+    for (const card of cards) pngs.push((await card.screenshot({ type: "jpeg", quality: 90 })) as Buffer);
     await browser.close();
     log(`${pngs.length} prints`);
 
     // Uploads em paralelo: em série, a latência de rede somava ~2s por slide.
     const urls = await Promise.all(
       pngs.map(async (png, i) => {
-        const path = `${spec.slug}/${stamp}/${String(i + 1).padStart(2, "0")}.png`;
-        const up = await db.storage.from(BUCKET).upload(path, png, { contentType: "image/png", upsert: true });
+        const path = `${spec.slug}/${stamp}/${String(i + 1).padStart(2, "0")}.jpg`;
+        const up = await db.storage.from(BUCKET).upload(path, png, { contentType: "image/jpeg", upsert: true });
         if (up.error) throw new Error("upload: " + up.error.message);
         return db.storage.from(BUCKET).getPublicUrl(path).data.publicUrl;
       })

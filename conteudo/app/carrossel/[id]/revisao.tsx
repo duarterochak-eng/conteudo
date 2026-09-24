@@ -163,7 +163,13 @@ export default function Revisao(props: any) {
           <div className="slides">
             {urls.map((u, i) => (
               <div key={u} style={{ outline: slide === i ? "2px solid var(--or)" : "none", borderRadius: 8 }}>
-                <img src={u} alt={"slide " + (i + 1)} onClick={() => setAberto(i)} style={{ cursor: "zoom-in" }} />
+                <img
+                  src={u}
+                  alt={"slide " + (i + 1)}
+                  loading="lazy"
+                  onClick={() => setAberto(i)}
+                  style={{ cursor: "zoom-in", aspectRatio: "1080 / 1350", width: "100%", background: "#e9e7e2" }}
+                />
                 <div className="row" style={{ fontSize: 12, marginTop: 4, justifyContent: "space-between" }}>
                   <span className="muted">slide {i + 1}</span>
                   <button className="btn" style={{ padding: "2px 8px", fontSize: 12 }} onClick={() => (slide === i ? setSlide(null) : setSlide(i))}>
