@@ -6,6 +6,27 @@ import { z } from "zod";
  * Texto aceita <em>laranja</em> e <mark>grifo laranja</mark>.
  */
 
+/** Componentes visuais (a imagem carrega a informação, não é enfeite). */
+export const ICONES = ["whatsapp", "ia", "crm", "alerta", "planilha", "email", "cliente", "relogio", "doc", "agenda", "dinheiro", "check"] as const;
+const Par = z.tuple([z.string(), z.string()]);
+const ate = (n: number) => z.array(z.string()).min(1).transform((a) => a.slice(0, n));
+const icone = z.string().transform((x) => ((ICONES as readonly string[]).includes(x) ? x : "doc"));
+export const Visuais = {
+  // ficha de sistema: CRM, cadastro, pedido. state "ruim" = campos vazios/desatualizados
+  ficha: z.object({ title: z.string(), icon: icone.optional(), rows: z.array(Par).min(1).transform((a) => a.slice(0, 5)), state: z.enum(["ok", "ruim"]).default("ok") }).optional(),
+  // antes e depois lado a lado
+  compare: z
+    .object({
+      before: z.object({ title: z.string().default("Hoje"), items: ate(4) }),
+      after: z.object({ title: z.string().default("Com processo"), items: ate(4) }),
+    })
+    .optional(),
+  // o mesmo dado digitado em vários lugares
+  repete: z.object({ data: z.array(Par).min(1).transform((a) => a.slice(0, 3)), systems: ate(4) }).optional(),
+  // ícone de cada etapa do flow (mesma ordem)
+  flow_icons: z.array(icone).transform((a) => a.slice(0, 5)).optional(),
+};
+
 export const SlideCover = z.object({
   type: z.literal("cover"),
   title: z.string(),
@@ -23,6 +44,7 @@ export const SlideStatement = z.object({
   title: z.string(),
   body: z.string().default(""),
   size: z.number().min(70).max(190).default(140),
+  ...Visuais,
 });
 
 export const SlideStep = z.object({
@@ -38,6 +60,7 @@ export const SlideStep = z.object({
     .array(z.object({ side: z.enum(["lead", "me"]), who: z.string(), text: z.string() }))
     .max(4)
     .optional(),
+  ...Visuais,
 });
 
 export const SlideCta = z.object({

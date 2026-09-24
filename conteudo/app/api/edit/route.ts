@@ -11,7 +11,10 @@ const REGRAS = `COMO INTERPRETAR O PEDIDO
   "sem graça", "falta molho", "tá fraco" = deixar mais forte e visual; nunca escreva essas palavras no slide.
   Só copie texto literal quando vier entre aspas.
 - "falta cor" / "mais cor": use <em>palavra</em> (laranja) ou <mark>palavra</mark> (grifo) em 1 ou 2 palavras-chave do título ou corpo; em flow, ponha flow_on na etapa principal.
-- "mais visual": troque parágrafo por items, flow ou chat.
+- "mais visual": troque parágrafo por UM destes visuais:
+  chat [{"side":"lead"|"me","who","text"}] · compare {"before":{"title","items"},"after":{"title","items"}} ·
+  repete {"data":[["Campo","valor"]],"systems":["WhatsApp","Planilha"]} · ficha {"title","icon","state":"ruim"|"ok","rows":[["Campo","valor"]]} ·
+  flow + flow_on + flow_icons (whatsapp, ia, crm, alerta, planilha, email, cliente, relogio, doc, agenda, dinheiro, check) · items.
 - "texto maior/menor": ajuste o campo size (70 a 190).
 - "gancho mais forte": título mais curto, com tensão ou resultado concreto.
 - Se o pedido for sobre layout que o JSON não controla (posição, fundo, fonte), faça o melhor com os campos disponíveis e diga no resumo o que não dá para mudar.

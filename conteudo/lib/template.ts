@@ -37,14 +37,107 @@ mark{background:linear-gradient(transparent 6%,var(--or) 6%,var(--or) 94%,transp
 .list div{display:grid;grid-template-columns:90px 1fr;align-items:baseline;font-size:40px;line-height:1.2;font-weight:600}
 .list span{font-family:Anton;font-size:52px;color:var(--or)}
 .chat{display:grid;gap:18px;margin-top:60px;max-width:820px}
-.bb{border:2.5px solid var(--ink);padding:20px 26px;font-size:32px;line-height:1.3;max-width:640px;background:#fff}
+.bb{border:2.5px solid var(--ink);padding:22px 28px;font-size:36px;line-height:1.3;max-width:700px;background:#fff}
 .bb.me{justify-self:end;background:var(--or);border-color:var(--or)}
 .bb small{display:block;font-family:Cond;font-weight:700;font-size:20px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;opacity:.7}
 .flow{display:flex;align-items:center;margin-top:80px}
 .node{border:2.5px solid var(--ink);padding:26px 22px;font-family:Cond;font-weight:700;font-size:30px;line-height:1.15;text-align:center;flex:0 1 auto;text-transform:uppercase;background:#fff}
 .node.on{background:var(--or);border-color:var(--or)}
 .wire{flex:1;height:2.5px;background:var(--ink);min-width:24px}
+.ic{display:inline-block;vertical-align:middle;flex:none}
+.flow.ico{align-items:stretch}
+.flow.ico .node{display:flex;flex-direction:column;align-items:center;gap:16px;padding:30px 20px;min-width:170px;font-size:28px}
+.flow.ico .wire{align-self:center}
+.card{background:#fff;border:2.5px solid var(--ink);padding:20px 26px 14px}
+.card.ruim{border-style:dashed;background:#FAF9F6}
+.card.hot{border-color:var(--or);box-shadow:8px 8px 0 var(--or)}
+.card h4{display:flex;align-items:center;gap:12px;font-family:Cond;font-weight:700;font-size:30px;letter-spacing:.04em;text-transform:uppercase;margin-bottom:8px}
+.card h4 .tag{margin-left:auto;font-size:20px;padding:4px 12px;border:2px solid currentColor}
+.card.ruim h4 .tag{color:var(--or)}
+.row{display:grid;grid-template-columns:270px 1fr;gap:14px;font-size:36px;line-height:1.25;padding:16px 0;border-top:1.5px dashed #cfcac2}
+.row b{font-weight:600;color:var(--mute);font-size:26px;text-transform:uppercase;letter-spacing:.03em;align-self:center}
+.card.ruim .row span{color:#a9a49c}
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:64px}
+.cmp .it{display:flex;gap:14px;align-items:flex-start;font-size:36px;line-height:1.2;padding:16px 0;border-top:1.5px dashed #cfcac2}
+.cmp .ruim .it{color:#6B6863}
+.rep{display:grid;grid-template-columns:1fr 70px 1.05fr;gap:10px;margin-top:56px;align-items:center}
+.rep>.card .row{grid-template-columns:1fr;gap:2px;font-size:32px}
+.rep>.card .row b{font-size:22px}
+.rep .mini{padding:12px 18px 8px;margin-bottom:12px}
+.rep .mini h4{font-size:25px;margin-bottom:2px}
+.rep .mini .row{grid-template-columns:140px 1fr;font-size:25px;padding:6px 0}
+.rep .mini .row b{font-size:19px}
+.rep .seta{display:flex;flex-direction:column;align-items:center;gap:8px;font-family:Cond;font-weight:700;font-size:18px;text-transform:uppercase;color:var(--or);text-align:center}
 `;
+}
+
+const PATHS: Record<string, string> = {
+  whatsapp: "M4 5h16v11H9l-5 4z",
+  ia: "M12 3l2 5 5 2-5 2-2 5-2-5-5-2 5-2z",
+  crm: "M5 6c0-1.7 3.1-3 7-3s7 1.3 7 3-3.1 3-7 3-7-1.3-7-3zM5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3",
+  alerta: "M6 16v-5a6 6 0 0112 0v5l2 2H4zM10 20a2 2 0 004 0",
+  planilha: "M4 4h16v16H4zM4 10h16M4 15h16M10 4v16",
+  email: "M3 6h18v12H3zM3 7l9 6 9-6",
+  cliente: "M12 12a4 4 0 100-8 4 4 0 000 8zM4 21c1-4 4.5-6 8-6s7 2 8 6",
+  relogio: "M12 21a9 9 0 100-18 9 9 0 000 18zM12 7v5l3 2",
+  doc: "M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7",
+  agenda: "M4 6h16v14H4zM4 10h16M8 3v5M16 3v5",
+  dinheiro: "M3 7h18v10H3zM12 15a3 3 0 100-6 3 3 0 000 6z",
+  check: "M5 12.5l4.5 4.5L19 7",
+  x: "M6 6l12 12M18 6L6 18",
+};
+function icon(name: string | undefined, size = 34, color = "currentColor") {
+  const d = PATHS[name || ""];
+  if (!d) return "";
+  return `<svg class="ic" viewBox="0 0 24 24" width="${size}" height="${size}"><path d="${d}" fill="none" stroke="${color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+}
+const SYS_ICON: Record<string, string> = { whatsapp: "whatsapp", planilha: "planilha", excel: "planilha", crm: "crm", "e-mail": "email", email: "email", agenda: "agenda", sistema: "crm", erp: "crm" };
+const sysIcon = (nome: string) => SYS_ICON[nome.toLowerCase().trim()] || "doc";
+
+/** Bloco visual do slide (step ou statement). Ordem de prioridade: chat > compare > repete > ficha > flow > items. */
+function visual(s: any): string {
+  if (s.chat?.length) {
+    return `<div class="chat">${s.chat
+      .map((b: any) => `<div class="bb ${b.side === "me" ? "me" : ""}"><small>${b.who}</small>${b.text}</div>`)
+      .join("")}</div>`;
+  }
+  if (s.compare) {
+    const col = (c: any, bom: boolean) => `<div class="card ${bom ? "hot" : "ruim"}">
+      <h4>${icon(bom ? "check" : "alerta", 30, bom ? "var(--or)" : "var(--ink)")}${c.title}</h4>
+      ${c.items.map((x: string) => `<div class="it">${icon(bom ? "check" : "x", 28, bom ? "var(--or)" : "#8a857d")}<span>${x}</span></div>`).join("")}
+    </div>`;
+    return `<div class="cmp">${col(s.compare.before, false)}${col(s.compare.after, true)}</div>`;
+  }
+  if (s.repete) {
+    const linhas = (rows: string[][]) => rows.map(([k, v]) => `<div class="row"><b>${k}</b><span>${v}</span></div>`).join("");
+    return `<div class="rep">
+      <div class="card"><h4>${icon("cliente", 30)}Dados do cliente</h4>${linhas(s.repete.data)}</div>
+      <div class="seta"><svg viewBox="0 0 24 24" width="48" height="48"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="var(--or)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>mesmos<br>dados</div>
+      <div>${s.repete.systems
+        .map((sy: string) => `<div class="card mini"><h4>${icon(sysIcon(sy), 24)}${sy}</h4>${linhas(s.repete.data.slice(0, 2))}</div>`)
+        .join("")}</div>
+    </div>`;
+  }
+  if (s.ficha) {
+    const f = s.ficha;
+    const ruim = f.state === "ruim";
+    return `<div class="card ${ruim ? "ruim" : "hot"}" style="margin-top:60px">
+      <h4>${icon(f.icon || "crm", 30)}${f.title}<span class="tag">${ruim ? "desatualizado" : "em dia"}</span></h4>
+      ${f.rows.map(([k, v]: string[]) => `<div class="row"><b>${k}</b><span>${v}</span></div>`).join("")}
+    </div>`;
+  }
+  if (s.flow?.length) {
+    const ico = Array.isArray(s.flow_icons) && s.flow_icons.length ? " ico" : "";
+    return `<div class="flow${ico}">${s.flow
+      .map((x: string, k: number) => `<div class="node ${k === s.flow_on ? "on" : ""}">${ico ? icon(s.flow_icons[k], 64) : ""}${x}</div>`)
+      .join('<div class="wire"></div>')}</div>`;
+  }
+  if (s.items?.length) {
+    return `<div class="list">${s.items
+      .map((x: string, k: number) => `<div><span>${String(k + 1).padStart(2, "0")}</span>${x}</div>`)
+      .join("")}</div>`;
+  }
+  return "";
 }
 
 export type PoseMap = Record<string, { url: string; style?: string }>;
@@ -88,22 +181,7 @@ function slideHtml(s: TSlide, i: number, n: number, spec: TSpec, poses: PoseMap)
       <div class="paper"></div></div>`;
   }
   // statement / step (ambos com moldura)
-  let extra = "";
-  if (s.type === "step") {
-    if (s.chat?.length) {
-      extra = `<div class="chat">${s.chat
-        .map((b) => `<div class="bb ${b.side === "me" ? "me" : ""}"><small>${b.who}</small>${b.text}</div>`)
-        .join("")}</div>`;
-    } else if (s.flow?.length) {
-      extra = `<div class="flow">${s.flow
-        .map((x, k) => `<div class="node ${k === s.flow_on ? "on" : ""}">${x}</div>`)
-        .join('<div class="wire"></div>')}</div>`;
-    } else if (s.items?.length) {
-      extra = `<div class="list">${s.items
-        .map((x, k) => `<div><span>${String(k + 1).padStart(2, "0")}</span>${x}</div>`)
-        .join("")}</div>`;
-    }
-  }
+  const extra = visual(s);
   return `<div class="s">
     <div class="box"></div>
     <div class="lab inner" style="top:92px">${(s as any).label || ""}</div>
@@ -127,7 +205,7 @@ export function specToHtml(spec: TSpec, poses: PoseMap, _baseUrl?: string) {
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/\u2026/g, "...");
   return `<!doctype html><html><head><meta charset="utf-8"><style>${css()}</style></head><body>${pages}<script>
-document.fonts.ready.then(()=>{document.querySelectorAll(".fit").forEach(el=>{
+document.fonts.ready.then(()=>{document.querySelectorAll(".giant").forEach(g=>{let f=parseFloat(getComputedStyle(g).fontSize);g.style.whiteSpace="nowrap";const r=document.createRange();r.selectNodeContents(g);while(r.getBoundingClientRect().width>1000&&f>80){f-=6;g.style.fontSize=f+"px";}});document.querySelectorAll(".fit").forEach(el=>{
   const s=el.closest(".s"),lim=s.getBoundingClientRect().top+${H}-150;let z=1;
   while(el.getBoundingClientRect().bottom>lim&&z>0.55){z-=0.04;el.style.zoom=String(z);}
 });document.body.dataset.fit="ok";});

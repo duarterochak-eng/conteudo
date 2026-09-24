@@ -12,12 +12,29 @@ SAÍDA: apenas o JSON, sem texto fora dele, neste formato:
 {"slug":"kebab-case","keyword":"PALAVRA","handle":"@kawan","caption":"...","slides":[...]}
 
 TIPOS DE SLIDE
-- {"type":"cover","title":"...","giant":"PALAVRA","eyebrow":"...","tag":"...","photo":"nome-da-pose","size":124,"giant_size":300}
-- {"type":"statement","label":"01 / O PROBLEMA","title":"...","body":"...","size":140}
-- {"type":"step","label":"02 / PASSO 1","title":"...","body":"...","size":130, e OPCIONALMENTE items[] OU flow[]+flow_on OU chat[{side:"lead"|"me",who,text}]}
-- {"type":"cta","eyebrow":"Quer o material?","sub":"Te mando no direct:","deliver":["...","...","..."],"photo":"nome-da-pose"}
+- {"type":"cover","title":"...","giant":"PALAVRA","eyebrow":"...","tag":"...","size":118}
+- {"type":"statement","label":"01 / O PROBLEMA","title":"...","body":"...","size":110, + UM visual opcional}
+- {"type":"step","label":"02 / SINAL 1","title":"...","body":"...","size":112, + UM visual}
+- {"type":"cta","eyebrow":"Quer o material?","sub":"Te mando no direct:","deliver":["...","...","..."]}
 
-ESTRUTURA PADRÃO (7 slides): capa · problema · 4 passos/peças · cta.
+VISUAIS (escolha UM por slide; a imagem precisa PROVAR a frase do título, não enfeitar)
+- chat: [{"side":"lead"|"me","who":"Cliente · 09:48","text":"..."}] 2 a 3 balões. Use para mostrar a conversa real (demora, resposta pronta).
+- compare: {"before":{"title":"Parece que é","items":[...]},"after":{"title":"Na verdade é","items":[...]}} 3 itens de até 4 palavras em cada lado. Use para reenquadrar ou antes/depois.
+- repete: {"data":[["Nome","João Silva"],["Telefone","(66) 99123-4567"],["Pedido","Orçamento #231"]],"systems":["WhatsApp","Planilha","CRM","E-mail"]}. Use para mostrar o mesmo dado digitado em vários lugares.
+- ficha: {"title":"Auto Peças Silva","icon":"crm","state":"ruim"|"ok","rows":[["Último contato","-"],["Status","-"],["Próximo passo","não definido"]]}. Use para mostrar um cadastro/CRM/pedido vazio (ruim) ou em dia (ok).
+- flow + flow_on + flow_icons: ["WhatsApp","IA","CRM","Alerta"], flow_on 1, flow_icons ["whatsapp","ia","crm","alerta"]. Use para mostrar como a solução anda sozinha. Ícones: whatsapp, ia, crm, alerta, planilha, email, cliente, relogio, doc, agenda, dinheiro, check.
+- items: 2 a 3 frases de CONTEÚDO (a pergunta real, a regra exata). Use por último, quando nenhum visual acima servir.
+- Nomes e números dentro de chat/ficha/repete são exemplos ilustrativos de empresa pequena (nome comum, DDD 66), nunca resultado.
+
+ESTRUTURA PADRÃO: TESE (7 slides) - use sempre, exceto se o tema pedir literalmente um passo a passo
+1. capa: reenquadramento que contraria o senso comum ("Não falta funcionário. Sobra retrabalho.").
+2. statement "01 / O PROBLEMA": a tese em uma frase, de preferência com compare (o que parece x o que é).
+3-5. step "02 / SINAL 1", "03 / SINAL 2", "04 / SINAL 3": três causas ou sinais. Os três títulos seguem o MESMO molde de frase (ex.: "O mesmo dado digitado 4 vezes", "Retorno que depende da memória", "CRM que ninguém atualiza"). Cada um com um visual DIFERENTE.
+6. step "05 / O QUE MUDA": a solução como fluxo com ícones (flow + flow_icons), corpo dizendo onde o dono entra.
+7. cta.
+
+ESTRUTURA ALTERNATIVA: PASSO A PASSO (só quando o tema é "como fazer X")
+capa · problema · 4 passos (label "02 / PASSO 1"...) · cta, cada passo com um visual.
 
 REGRAS DE ESCRITA
 - Português do Brasil, direto, frases curtas, sem emoji.
@@ -29,11 +46,29 @@ PALAVRA-CHAVE (keyword)
 - Uma palavra comum em português, 4 a 8 letras, fácil de digitar no celular: AGENTE, ROTEIRO, FLUXO, PROMO.
 - Proibido juntar siglas ou palavras (nada de IAWHATS, AUTOIA).
 
-SLIDES DE PASSO (step): NUNCA só título e corpo
-- Cada passo traz UM destes: items (2 a 4 itens curtos), flow (3 a 5 etapas, flow_on no destaque) ou chat (2 a 4 balões com a conversa real entre cliente e atendente/agente).
-- Varie: nos 4 passos use pelo menos 2 tipos diferentes. Se o tema envolve atendimento ou WhatsApp, pelo menos 1 passo é chat.
-- Corpo do passo: 15 a 30 palavras, com um exemplo concreto de empresa pequena ("numa clínica, o agente confirma a consulta na véspera").
-- Título do passo: verbo + objeto concreto ("Escreva as 10 perguntas que mais chegam"), nada vago ("Monitore e ajuste").
+SLIDES DE SINAL/PASSO (step): NUNCA só título e corpo
+- Cada slide traz UM visual da lista VISUAIS.
+- Varie: no carrossel inteiro use pelo menos 3 visuais diferentes. Se o tema envolve atendimento ou WhatsApp, pelo menos 1 é chat.
+- Corpo: 8 a 25 palavras (pode ficar vazio quando o visual já explica), com um exemplo concreto de empresa pequena ("numa clínica, o agente confirma a consulta na véspera").
+- Título: frase concreta e curta. Em PASSO A PASSO, verbo + objeto ("Escreva as 10 perguntas que mais chegam"). Nunca vago ("Monitore e ajuste", "Teste e ajuste").
+
+CONTEÚDO QUE ENSINA (o erro mais comum é slide que só dá ordem)
+- Cada slide precisa entregar algo que o leitor não sabia ou pode copiar: a mensagem pronta, a regra exata, a cena real.
+- items são CONTEÚDO, nunca rótulo de categoria. Proibido item tipo "Ajuste tom", "Horário de início", "Dias de pausa".
+- Linguagem de dono de loja, não de manual: nada de "horário de cobertura", "escalonamento", "fluxo de encaminhamento", "FAQ".
+
+EXEMPLO RUIM (não faça):
+{"type":"step","title":"Defina o horário de cobertura","body":"Escolha até que horas o agente deve responder antes de encaminhar para o humano.","items":["09h às 18h","Inclua sábado","Exclua feriados"]}
+Por que é ruim: título de manual, itens são rótulos, ninguém aprende nada.
+
+EXEMPLO BOM:
+{"type":"step","title":"Decida o que acontece às 22h","body":"Dúvida simples o agente resolve na hora. Pedido e reclamação viram recado para você de manhã.","chat":[{"side":"lead","who":"Cliente · 22:14","text":"Vocês têm filtro pro Gol 2012?"},{"side":"me","who":"Agente","text":"Temos sim. Quer que eu separe pra você retirar amanhã a partir das 8h?"}]}
+
+EXEMPLO RUIM (não faça):
+{"type":"step","title":"Teste e ajuste as respostas","body":"Simule perguntas reais e corrija frases que geram dúvidas.","items":["Teste 5 perguntas","Ajuste tom","Atualize a FAQ"]}
+
+EXEMPLO BOM:
+{"type":"step","title":"Teste com as perguntas chatas","body":"Mande você mesmo as perguntas que mais dão trabalho. Se a resposta te deixaria sem graça com o cliente, reescreva a instrução.","items":["\"Faz mais barato?\"","\"Tem pra hoje?\"","\"Isso é robô?\""]}
 
 LIMITES DE ESPAÇO (o slide é 1080x1350; passou disso, corta)
 - Título de passo: no máximo 6 palavras.
