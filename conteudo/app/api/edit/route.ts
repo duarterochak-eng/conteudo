@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ZodError } from "zod";
 import { db } from "@/lib/supabase";
 import { askJson } from "@/lib/llm";
 import { Spec, Slide } from "@/lib/spec";
@@ -31,6 +32,7 @@ RESUMO
 
 const SYSTEM_SLIDE = `Você edita UM slide de um carrossel de Instagram (JSON).
 Responda APENAS com: {"slide":{...o slide editado, mesmo "type"...},"resumo":"..."}
+O campo type nunca muda. O visual vai nos campos chat, compare, ficha, flow, items ou repete.
 
 ${REGRAS}`;
 
@@ -61,8 +63,11 @@ ${JSON.stringify(alvo)}
 INSTRUÇÃO:
 ${instrucao}`;
       const r = await askJson(SYSTEM_SLIDE, user);
-      const editado = Slide.parse(r.slide ?? r);
-      if (editado.type !== alvo.type) throw new Error("o modelo trocou o tipo do slide; tente de novo");
+      const bruto = r.slide ?? r;
+      // o modelo às vezes põe o nome do visual em "type" ("chat", "compare"); o tipo nunca muda.
+      // statement não aceita chat/flow/items (seriam descartados sem aviso), então vira step.
+      bruto.type = alvo.type === "statement" && (bruto.chat || bruto.flow || bruto.items) ? "step" : alvo.type;
+      const editado = Slide.parse(bruto);
       const slides = [...atual.slides];
       slides[slide_index] = editado;
       novo = Spec.parse({ ...atual, slides });
@@ -95,6 +100,9 @@ ${instrucao}`;
 
     return NextResponse.json({ ok: true, spec: novo, resumo });
   } catch (e: any) {
+    if (e instanceof ZodError) {
+      return NextResponse.json({ erro: "O modelo devolveu um formato inválido. Tente de novo." }, { status: 500 });
+    }
     return NextResponse.json({ erro: String(e?.message || e) }, { status: 500 });
   }
 }
