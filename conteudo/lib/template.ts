@@ -200,7 +200,9 @@ export function specToHtml(spec: TSpec, poses: PoseMap, _baseUrl?: string) {
   const pages = spec.slides
     .map((s, i) => slideHtml(s, i + 1, n, spec, poses))
     .join("\n")
-    .replace(/[\u2013\u2014\u2212]/g, "-")
+    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2212]/g, "-")
+    .replace(/\u00AD/g, "")
+    .replace(/[\u00A0\u202F\u2007\u2009]/g, " ")
     .replace(/[\u201C\u201D\u201E]/g, '"')
     .replace(/[\u2018\u2019]/g, "'")
     .replace(/\u2026/g, "...");

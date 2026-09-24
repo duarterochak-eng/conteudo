@@ -4,7 +4,7 @@ import { askJson } from "@/lib/llm";
 import { Spec } from "@/lib/spec";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const SYSTEM = `Você escreve carrosséis de Instagram para um perfil que fala com DONOS DE PEQUENAS E MÉDIAS EMPRESAS sobre IA aplicada à operação (atendimento, vendas, cobrança, processos).
 
@@ -37,6 +37,10 @@ ESTRUTURA ALTERNATIVA: PASSO A PASSO (só quando o tema é "como fazer X")
 capa · problema · 4 passos (label "02 / PASSO 1"...) · cta, cada passo com um visual.
 
 REGRAS DE ESCRITA
+- Os exemplos deste prompt são só referência de formato. NUNCA copie títulos, frases ou nomes deles; escreva do zero para o TEMA.
+- O corpo NUNCA repete o título com outras palavras. Ele acrescenta: a cena, o porquê ou onde o dono entra.
+- Slide com visual: título de até 7 palavras e corpo de até 15 palavras (ou vazio). O visual é o protagonista.
+- Capa: marque 1 a 2 palavras do título com <em>...</em>.
 - Português do Brasil, direto, frases curtas, sem emoji.
 - Capa: no máximo 9 palavras, com tensão ou resultado concreto ("Seu WhatsApp vende enquanto você dorme"), nunca título de apostila.
 - <em>palavra</em> = laranja. <mark>palavra</mark> = grifo. No máximo 2 por slide.

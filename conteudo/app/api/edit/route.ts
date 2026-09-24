@@ -4,7 +4,7 @@ import { askJson } from "@/lib/llm";
 import { Spec, Slide } from "@/lib/spec";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 const REGRAS = `COMO INTERPRETAR O PEDIDO
 - A instrução é a INTENÇÃO do dono, não texto para colar. Gíria vira ação:
