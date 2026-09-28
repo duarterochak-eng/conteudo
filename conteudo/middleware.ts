@@ -3,8 +3,7 @@ import type { NextRequest } from "next/server";
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const aberto = pathname.startsWith("/login") || pathname.startsWith("/api/login") || pathname.startsWith("/fonts")
-    || pathname.startsWith("/isca") || pathname.startsWith("/api/isca") || pathname.startsWith("/tabela-ia");
+  const aberto = pathname.startsWith("/login") || pathname.startsWith("/api/login") || pathname.startsWith("/fonts");
   if (aberto) return NextResponse.next();
   const ok = req.cookies.get("auth")?.value === process.env.APP_PASSWORD;
   if (ok) return NextResponse.next();

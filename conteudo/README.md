@@ -17,8 +17,6 @@ Plataforma de produção de carrosséis para o Instagram: gera o roteiro, monta 
 | `GROQ_API_KEY` | usado quando não há chave da Anthropic |
 | `CLAUDE_MODEL` | opcional (padrão `claude-haiku-4-5`) |
 | `GROQ_MODEL` | opcional (padrão `llama-3.3-70b-versatile`) |
-| `N8N_LEAD_WEBHOOK_URL` | webhook do n8n que envia o e-mail da isca (`/api/isca`) |
-| `N8N_LEAD_SECRET` | segredo enviado no header `x-lead-secret` para o webhook |
 
 4. **Deploy.** Abra o endereço, digite a senha.
 
@@ -44,15 +42,6 @@ O campo `name` é o que o roteiro usa em `photo`. O `style` posiciona a foto no 
 - `app/carrossel/[id]` — revisão: slides, chat e aprovação.
 
 Toda edição vira versão nova e fica registrada em `editorial_events`, que é a base do aprendizado das suas preferências.
-
-## Iscas (captura de lead)
-
-Página pública `/isca/PALAVRA` (sem senha) para o "Comenta PALAVRA" do Instagram. Lê a tabela `iscas` (`ativa = true`).
-
-- Começa pelo e-mail: se o lead já existe, só envia; se não, pede nome, empresa, WhatsApp (opcional) e aceite.
-- Descadastrado: pede só o reaceite (opcional) e envia.
-- `/api/isca` grava em `leads` e `lead_iscas` e faz POST no `N8N_LEAD_WEBHOOK_URL` com `{ lead_isca_id, email, nome, isca, titulo, url_entrega, assunto_email }` e header `x-lead-secret`. Timeout de 8 s; se falhar, o pedido fica sem `enviada_em` para reenvio. Mesmo lead + isca em menos de 10 min não reenvia.
-- `/tabela-ia` também é público (arquivo estático em `public/tabela-ia/`).
 
 ## Limites conhecidos
 
