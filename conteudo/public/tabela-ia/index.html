@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Tabela das IAs</title>
+<meta name="robots" content="noindex">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#F2F0EB; --paper:#FFFDF8; --ink:#141210; --mute:#6F6961; --line:#DAD5CB; --soft:#E7E2D8;
+  --or:#E0521D; --or-soft:#F7DDD1;
+  --luna:#E0521D; --sol:#141210; --opus:#141210; --astra:#141210;
+  --display:"Anton","Impact","Arial Narrow",sans-serif;
+  --body:"Inter Tight","Inter","Segoe UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;padding-inline:16px;padding-block:0 56px}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{margin:0;text-wrap:balance}
+.disp{font-family:var(--display);font-weight:400;text-transform:uppercase;letter-spacing:.3px;line-height:1.08}
+mark{background:var(--or);color:#fff;padding:0 .18em;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.lab{font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:22px 8px}
+.top b{color:var(--ink)}
+header.hero{padding-block:18px 28px;display:grid;gap:14px}
+header.hero h1{font-size:clamp(42px,8vw,86px)}
+header.hero p{margin:0;max-width:60ch;font-size:18px;color:#2E2A26}
+
+/* crachás */
+.team{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-block:10px 40px}
+@media (max-width:860px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:440px){.team{grid-template-columns:minmax(0,1fr)}}
+.badge{background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.badge.or{border-color:var(--or)}
+.badge .strip{background:var(--ink);color:#fff;display:flex;justify-content:space-between;padding:9px 14px;font-weight:600;font-size:11px;letter-spacing:.14em;text-transform:uppercase}
+.badge.or .strip{background:var(--or)}
+.badge .ic{background:var(--soft);display:flex;align-items:center;justify-content:center;padding:18px 0;border-bottom:2.5px solid var(--ink)}
+.badge.or .ic{border-bottom-color:var(--or)}
+.badge .bd{padding:14px 16px 16px;display:grid;gap:8px}
+.badge .nm{font-family:var(--display);font-size:34px;text-transform:uppercase;line-height:1}
+.sal{display:flex;align-items:baseline;gap:8px}
+.sal b{font-family:var(--display);font-weight:400;font-size:40px;line-height:1}
+.badge.or .sal b{color:var(--or)}
+.sal span{font-size:13px;color:var(--mute)}
+.badge .where{font-size:14px;color:#2E2A26}
+.badge .no{font-size:13px;font-weight:600;color:var(--or)}
+
+/* seções */
+section{margin-block:0 44px}
+.sh{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:12px;margin-bottom:16px}
+.sh h2{font-size:clamp(30px,5vw,48px)}
+.filters{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:14px;font-weight:600;padding:7px 14px;border-radius:99px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.chip:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+
+/* tabela */
+.tbl{background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;overflow:hidden}
+.row{display:grid;grid-template-columns:minmax(0,1.5fr) 150px minmax(0,1.5fr) 170px;gap:16px;padding:16px 20px;border-top:1px solid var(--line);align-items:center}
+.row.hd{border-top:0;background:var(--ink);color:#fff;padding-block:11px;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.row .task{font-weight:600;font-size:17px}
+.row .why{font-size:15px;color:#3A3530}
+.row .cost{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.row .cost small{display:block;font-weight:400;font-size:12.5px;color:var(--mute)}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:600;font-size:14px;padding:5px 12px;border-radius:99px;border:2px solid var(--ink);white-space:nowrap}
+.pill.luna{background:var(--or);border-color:var(--or);color:#fff}
+.pill.sol{background:var(--paper)}
+.pill.opus{background:var(--ink);color:#fff}
+.pill.astra{background:var(--soft)}
+@media (max-width:720px){
+  .row.hd{display:none}
+  .row{grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;padding:16px}
+  .row .task{grid-column:1}
+  .row .pill{grid-column:2;grid-row:1}
+  .row .why{grid-column:1/-1}
+  .row .cost{grid-column:1/-1;text-align:left}
+  .row .cost small{display:inline;margin-left:6px}
+}
+
+/* preços */
+.prices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:720px){.prices{grid-template-columns:minmax(0,1fr)}}
+.receipt{background:var(--paper);padding:22px 24px 30px;position:relative;box-shadow:0 18px 40px -24px rgba(20,18,16,.45)}
+.receipt::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:14px;background:linear-gradient(-45deg,transparent 9px,var(--paper) 0) 0 0/18px 14px repeat-x,linear-gradient(45deg,transparent 9px,var(--paper) 0) 0 0/18px 14px repeat-x}
+.receipt h3{font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--mute);text-align:center;padding-bottom:14px;border-bottom:2px dashed var(--line);margin-bottom:6px}
+.line{display:flex;justify-content:space-between;align-items:baseline;gap:14px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:15.5px}
+.line:last-of-type{border-bottom:0}
+.line b{font-family:var(--display);font-weight:400;font-size:26px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.line b.or{color:var(--or)}
+.line span small{display:block;color:var(--mute);font-size:13px}
+.note{font-size:13.5px;color:var(--mute);margin-top:16px;max-width:75ch}
+
+/* regra */
+.rule{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+@media (max-width:720px){.rule{grid-template-columns:minmax(0,1fr)}}
+.step{border-top:4px solid var(--ink);padding-top:12px;display:grid;gap:4px}
+.step:first-child{border-top-color:var(--or)}
+.step .k{font-family:var(--display);font-size:28px;text-transform:uppercase;line-height:1.05}
+.step p{margin:0;color:#3A3530}
+
+.cta{background:var(--ink);color:#fff;border-radius:18px;padding:30px 28px;display:grid;gap:12px}
+.cta h2{font-size:clamp(30px,5vw,50px)}
+.cta p{margin:0;max-width:60ch;color:#D9D4CB}
+.cta .h{font-family:var(--display);font-size:28px;color:var(--or);letter-spacing:.5px}
+
+.teams{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.teams{grid-template-columns:minmax(0,1fr)}}
+.teamcol{background:var(--paper);border:2.5px solid var(--ink);border-radius:18px;overflow:hidden}
+.teamcol .th{background:var(--ink);color:#fff;padding:12px 18px;display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.teamcol .th b{font-family:var(--display);font-weight:400;font-size:26px;text-transform:uppercase;letter-spacing:.4px}
+.teamcol .th span{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:#BDB6AB;font-weight:600}
+.m{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:14px 18px;border-top:1px solid var(--line)}
+.m:first-of-type{border-top:0}
+.m .n{font-weight:700;font-size:17px}
+.m .c{font-size:12px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--or)}
+.m .x{grid-row:1/3;grid-column:2;align-self:center;text-align:right;font-family:var(--display);font-size:30px;line-height:1;font-variant-numeric:tabular-nums}
+.m .x small{display:block;font-family:var(--body);font-size:11.5px;color:var(--mute);letter-spacing:.04em}
+.m .d{grid-column:1/-1;font-size:14.5px;color:#3A3530}
+.m .w{grid-column:1/-1;font-size:13px;color:var(--mute)}
+.m.old{opacity:.72}
+.m.star .n::after{content:"no vídeo";margin-left:8px;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;background:var(--or);color:#fff;padding:2px 7px;border-radius:99px;vertical-align:2px}
+.row2{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr);gap:16px;padding:15px 20px;border-top:1px solid var(--line);align-items:center}
+.row2.hd{border-top:0;background:var(--ink);color:#fff;padding-block:11px;font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.row2 .task{font-weight:600;font-size:16.5px}
+.row2 .task small{display:block;font-weight:400;font-size:13.5px;color:var(--mute);margin-top:2px}
+.pick{display:grid;gap:5px;justify-items:start}
+.pick .cost{font-variant-numeric:tabular-nums;font-weight:600;font-size:14.5px}
+.pick .cost small{font-weight:400;color:var(--mute);font-size:12.5px;margin-left:4px}
+.pill.cl{background:var(--paper)}
+@media (max-width:720px){
+  .row2.hd{display:none}
+  .row2{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px 14px;padding:16px}
+  .row2 .task{grid-column:1/-1}
+  .pick::before{content:attr(data-side);font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--mute)}
+}
+footer{margin-top:28px;font-size:13px;color:var(--mute);display:grid;gap:6px}
+footer a{color:var(--ink)}
+</style>
+</head><body>
+
+<div class="wrap">
+  <div class="top"><span class="lab">Tabela · atualizada em 28/09/2026</span><span class="lab"><b>@kawan.labs</b></span></div>
+
+  <header class="hero">
+    <h1 class="disp">Qual IA <mark>contratar</mark> pra cada tarefa</h1>
+    <p>Os modelos mais usados do ChatGPT e do Claude, tratados como funcionários: cada um é bom numa coisa e cobra um salário diferente. Contratar o errado é pagar até 100 vezes mais pelo mesmo serviço.</p>
+  </header>
+
+  <div class="team" aria-label="As 4 funcionárias">
+    <article class="badge or">
+      <div class="strip"><span>Crachá</span><span>Estagiária</span></div>
+      <div class="ic"><svg viewBox="0 0 120 120" width="72" height="72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M28 44h52v34a20 20 0 0 1-20 20H48a20 20 0 0 1-20-20z"/><path d="M80 52h8a12 12 0 0 1 0 24h-8"/><path d="M44 18c-4 6 4 10 0 16M60 18c-4 6 4 10 0 16"/></svg></div>
+      <div class="bd"><div class="nm">GPT-6 Luna</div><div class="sal"><b>1x</b><span>salário base</span></div>
+      <div class="where">De graça no app do ChatGPT pro computador.</div><div class="no">Não deixa sozinha com cliente irritado.</div></div>
+    </article>
+    <article class="badge">
+      <div class="strip"><span>Crachá</span><span>Atendente</span></div>
+      <div class="ic"><svg viewBox="0 0 120 120" width="72" height="72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M24 70V58a36 36 0 0 1 72 0v12"/><rect x="16" y="62" width="18" height="28" rx="7"/><rect x="86" y="62" width="18" height="28" rx="7"/><path d="M95 90c0 12-12 18-30 18"/></svg></div>
+      <div class="bd"><div class="nm">GPT-6 Sol</div><div class="sal"><b>20x</b><span>a Luna · metade do Opus</span></div>
+      <div class="where">No ChatGPT pago ou ligada no WhatsApp da empresa.</div><div class="no">Não pede proposta pra ela.</div></div>
+    </article>
+    <article class="badge">
+      <div class="strip"><span>Crachá</span><span>Analista</span></div>
+      <div class="ic"><svg viewBox="0 0 120 120" width="72" height="72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="18" y="16" width="84" height="88" rx="8"/><path d="M34 84V66M52 84V50M70 84V60M88 84V38"/><path d="M34 44l18-10 18 8 18-14" stroke="#E0521D"/></svg></div>
+      <div class="bd"><div class="nm">Claude Opus 5.5</div><div class="sal"><b>40x</b><span>a Luna</span></div>
+      <div class="where">No Claude pago ou ligado numa automação.</div><div class="no">Não coloca pra responder "qual o horário?".</div></div>
+    </article>
+    <article class="badge">
+      <div class="strip"><span>Crachá</span><span>Braçal</span></div>
+      <div class="ic"><svg viewBox="0 0 120 120" width="72" height="72" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="12" y="18" width="96" height="64" rx="6"/><path d="M44 102h32M60 82v20"/><path d="M58 36v32l9-9 7 14 7-3-7-14h13z" fill="#E0521D"/></svg></div>
+      <div class="bd"><div class="nm">GPT-6 Astra</div><div class="sal"><b>100x</b><span>a Luna · a mais cara</span></div>
+      <div class="where">No ChatGPT pago. Mexe no computador por você.</div><div class="no">Só pro braçal que as outras não fazem.</div></div>
+    </article>
+  </div>
+
+
+  <section id="quadro">
+    <div class="sh"><h2 class="disp">O quadro <mark>completo</mark></h2><span class="lab">Salário = quantas vezes o preço da GPT-6 Luna</span></div>
+    <div class="teams">
+      <div class="teamcol">
+        <div class="th"><b>ChatGPT</b><span>OpenAI</span></div>
+        <div class="m"><span class="n">GPT-5.6 Luna</span><span class="c">Estagiária do grátis</span><span class="x">—<small>só no app</small></span><span class="d">Padrão no ChatGPT Free e Go. Conversa do dia a dia.</span></div>
+        <div class="m star"><span class="n">GPT-6 Luna</span><span class="c">Estagiária</span><span class="x" style="color:var(--or)">1x<small>base</small></span><span class="d">Resumo, legenda, lista. De graça no app do ChatGPT pro computador.</span><span class="w">Também no Work, a partir do Plus.</span></div>
+        <div class="m"><span class="n">GPT-5.6 Sol</span><span class="c">Atendente (geração anterior)</span><span class="x">—<small>só no app</small></span><span class="d">Padrão no chat de todo plano pago.</span></div>
+        <div class="m star"><span class="n">GPT-6 Sol</span><span class="c">Atendente</span><span class="x">20x</span><span class="d">Atendimento, código, trabalho do dia a dia pesado.</span><span class="w">No Work e no Codex, a partir do Plus.</span></div>
+        <div class="m star"><span class="n">GPT-6 Astra</span><span class="c">Braçal cara</span><span class="x">100x</span><span class="d">Mexe no computador por você. A mais forte da OpenAI.</span><span class="w">No Work a partir do Plus. No chat aparece como "GPT-6 Pro", no Pro.</span></div>
+      </div>
+      <div class="teamcol">
+        <div class="th"><b>Claude</b><span>Anthropic</span></div>
+        <div class="m"><span class="n">Claude Haiku 4.5</span><span class="c">Triagem</span><span class="x">10x</span><span class="d">Separar, classificar e extrair dado. Rápido e barato.</span><span class="w">Mais usado em automação.</span></div>
+        <div class="m"><span class="n">Claude Sonnet 5</span><span class="c">Assistente</span><span class="x">20x</span><span class="d">Uso geral. Mesmo salário da Sol.</span><span class="w">Padrão no Claude grátis e no Pro.</span></div>
+        <div class="m old"><span class="n">Claude Opus 5</span><span class="c">Analista antigo</span><span class="x">50x</span><span class="d">O 5.5 é mais novo e mais barato. Não tem motivo pra ficar nele.</span></div>
+        <div class="m star"><span class="n">Claude Opus 5.5</span><span class="c">Analista</span><span class="x">40x</span><span class="d">Planilha, proposta, contrato. O melhor em trabalho de escritório.</span><span class="w">No Claude Pro e Max.</span></div>
+        <div class="m"><span class="n">Claude Fable 5.1</span><span class="c">Especialista caro</span><span class="x">100x</span><span class="d">Trabalho longo e complexo, que leva horas.</span><span class="w">No Claude Max.</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="tarefas">
+    <div class="sh"><h2 class="disp">Tarefa por <mark>tarefa</mark></h2><span class="lab">Custo: no app ou por conversa numa automação</span></div>
+    <div class="tbl" id="tbl">
+      <div class="row2 hd"><span>Tarefa da empresa</span><span>No ChatGPT</span><span>No Claude</span></div>
+    </div>
+  </section>
+
+  <section id="precos">
+    <div class="sh"><h2 class="disp">Quanto custa em <mark>real</mark></h2></div>
+    <div class="prices">
+      <div class="receipt">
+        <h3>Planos do ChatGPT</h3>
+        <div class="line"><span>Free<small>GPT-5.6 Luna; GPT-6 Luna no app pro computador</small></span><b class="or">R$ 0</b></div>
+        <div class="line"><span>Go<small>mais limite que o Free</small></span><b>~R$ 43/mês</b></div>
+        <div class="line"><span>Plus<small>Sol no chat; Astra, Sol e Luna no Work</small></span><b>~R$ 107/mês</b></div>
+        <div class="line"><span>Pro<small>GPT-6 Pro (Astra) no chat</small></span><b>~R$ 536/mês</b></div>
+      </div>
+      <div class="receipt">
+        <h3>Planos do Claude</h3>
+        <div class="line"><span>Free<small>Sonnet 5</small></span><b class="or">R$ 0</b></div>
+        <div class="line"><span>Pro<small>Sonnet 5 e Opus 5.5</small></span><b>~R$ 107/mês</b></div>
+        <div class="line"><span>Max<small>tudo, incluindo o Fable 5.1</small></span><b>~R$ 536/mês</b></div>
+      </div>
+      <div class="receipt" style="grid-column:1/-1">
+        <h3>Numa automação: 1.000 conversas de WhatsApp no mês</h3>
+        <div class="line"><span>GPT-6 Luna</span><b class="or">R$ 16</b></div>
+        <div class="line"><span>Claude Haiku 4.5</span><b>R$ 161</b></div>
+        <div class="line"><span>GPT-6 Sol · Claude Sonnet 5</span><b>R$ 322</b></div>
+        <div class="line"><span>Claude Opus 5.5</span><b>R$ 643</b></div>
+        <div class="line"><span>GPT-6 Astra · Claude Fable 5.1</span><b>R$ 1.609</b></div>
+      </div>
+    </div>
+    <p class="note">Conta aproximada com o preço público de 22/09/2026 e dólar a R$ 5,18 + 3,5% de IOF do cartão. Uma conversa de WhatsApp foi estimada em 25 mil tokens lidos e 1 mil escritos, sem cache. Planos convertidos do preço em dólar (Go US$ 8, Plus e Claude Pro US$ 20, Pro e Max a partir de US$ 100). Os modelos de cada plano mudam rápido: confere no app antes de assinar.</p>
+  </section>
+
+  <section id="regra">
+    <div class="sh"><h2 class="disp">Regra de <mark>bolso</mark></h2></div>
+    <div class="rule">
+      <div class="step"><span class="k">Começa na Luna</span><p>Tudo que é repetido, curto ou só organiza informação.</p></div>
+      <div class="step"><span class="k">Saiu fraco? Sobe</span><p>Se a resposta vier rasa, passa a mesma tarefa pro Opus 5.5.</p></div>
+      <div class="step"><span class="k">Astra por último</span><p>Só quando precisa clicar num site ou sistema que não conversa com nada.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="cta">
+      <span class="lab" style="color:#BDB6AB">O segredo</span>
+      <h2 class="disp">Não escolhe uma. Monta a <mark>equipe</mark>.</h2>
+      <p>A Sol atende o WhatsApp o dia inteiro. Quando o cliente pede proposta, ela passa sozinha pro Opus, e você só aprova. É isso que eu monto nas empresas.</p>
+      <span class="h">Me chama no direct: @kawan.labs</span>
+    </div>
+  </section>
+
+  <footer>
+    <span>Fontes:
+      <a href="https://9to5google.com/2026/09/22/claude-opus-5-5-and-openai-gpt-6-sol-luna-both-launch-today-with-lower-costs/">9to5Google</a> ·
+      <a href="https://fortune.com/2026/09/03/openai-debuts-gpt-6-astra-computer-use-greg-brockman-says-start-of-agi/">Fortune</a> ·
+      <a href="https://www.anthropic.com/claude-opus-5-5">Anthropic</a> ·
+      <a href="https://openai.com/index/introducing-gpt-6-sol-and-luna/">OpenAI</a> ·
+      <a href="https://www.theneuron.ai/guides/gpt-6-sol-vs-luna-vs-claude-opus-5-5-which-should-you-use/">The Neuron</a> ·
+      <a href="https://benchlm.ai/anthropic/api-pricing">BenchLM</a> ·
+      <a href="https://theaicareerlab.com/blog/chatgpt-pricing-plans-explained">AI Career Lab</a> ·
+      <a href="https://christopheralarcon.com/blog/gpt-6-astra-chatgpt-plans">Alarcon</a>
+    </span>
+    <span>Salário = proporção do preço público por uso (API), com a GPT-6 Luna como base: Haiku 4.5 10x, Sol e Sonnet 5 20x, Opus 5.5 40x, Opus 5 50x, Astra e Fable 5.1 100x. GPT-5.6 Luna e Sol aparecem só nos planos.</span>
+  </footer>
+</div>
+
+<script>
+const T=[
+ ["Resumir e-mail ou documento longo","", ["GPT-6 Luna","luna","R$ 0","app pro computador"], ["Sonnet 5","cl","R$ 0","Claude grátis"]],
+ ["Escrever legenda de post","", ["GPT-6 Luna","luna","R$ 0","app pro computador"], ["Sonnet 5","cl","R$ 0","Claude grátis"]],
+ ["Organizar lista ou limpar planilha simples","", ["GPT-6 Luna","luna","R$ 0","app pro computador"], ["Sonnet 5","cl","R$ 0","Claude grátis"]],
+ ["Responder dúvida repetida no WhatsApp","horário, endereço, preço", ["GPT-6 Luna","luna","R$ 0,016","por conversa"], ["Haiku 4.5","cl","R$ 0,16","por conversa"]],
+ ["Atender o WhatsApp o dia inteiro","agendar, orçamento padrão", ["GPT-6 Sol","sol","R$ 0,32","por conversa"], ["Sonnet 5","cl","R$ 0,32","por conversa"]],
+ ["Cliente irritado ou reclamação","cada palavra conta", ["GPT-6 Sol","sol","R$ 0,32","por conversa"], ["Opus 5.5","opus","R$ 0,64","por conversa"]],
+ ["Proposta comercial","o texto que fecha a venda", ["GPT-6 Sol","sol","~R$ 107","Plus/mês"], ["Opus 5.5","opus","~R$ 107","Pro/mês"]],
+ ["Analisar a planilha de vendas","onde está perdendo dinheiro", ["GPT-6 Sol","sol","~R$ 107","Plus/mês"], ["Opus 5.5","opus","~R$ 107","Pro/mês"]],
+ ["Revisar contrato ou documento importante","erro aqui custa caro", ["GPT-6 Sol","sol","~R$ 107","Plus/mês"], ["Opus 5.5","opus","~R$ 107","Pro/mês"]],
+ ["Cadastrar produtos num site ou sistema","clicar igual gente", ["GPT-6 Astra","astra","~R$ 107","Plus, no Work"], ["Claude no Chrome","cl","~R$ 107","Pro/mês"]],
+ ["Projeto longo, que leva horas","pesquisa grande, análise de muitos arquivos", ["GPT-6 Astra","astra","~R$ 536","Pro/mês"], ["Fable 5.1","astra","~R$ 536","Max/mês"]]
+];
+const tbl=document.getElementById("tbl");
+const pick=(side,[n,k,c,u])=>`<span class="pick" data-side="${side}"><span class="pill ${k}">${n}</span><span class="cost">${c}<small>${u}</small></span></span>`;
+T.forEach(([t,sub,a,b])=>{
+  const r=document.createElement("div");r.className="row2";
+  r.innerHTML=`<span class="task">${t}${sub?`<small>${sub}</small>`:""}</span>${pick("No ChatGPT",a)}${pick("No Claude",b)}`;
+  tbl.appendChild(r);
+});
+</script>
+
+</body></html>
