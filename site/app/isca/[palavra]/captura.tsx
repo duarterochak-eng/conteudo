@@ -16,6 +16,7 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
   const [whatsapp, setWhatsapp] = useState("");
   const [aceite, setAceite] = useState(false);
   const [primeiro, setPrimeiro] = useState("");
+  const [urlEntrega, setUrlEntrega] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erros, setErros] = useState<Erros>({});
 
@@ -35,7 +36,7 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
       }
       if (j.status === "cadastro") setEtapa("cadastro");
       else if (j.status === "reaceite") { setPrimeiro(j.nome || ""); setEtapa("reaceite"); }
-      else { setPrimeiro(j.nome || primeiro); setEtapa("pronto"); }
+      else { setPrimeiro(j.nome || primeiro); setUrlEntrega(j.url || ""); setEtapa("pronto"); }
     } catch {
       setErros({ geral: "Sem conexão. Confere a internet e tenta de novo." });
     } finally {
@@ -175,9 +176,18 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
             <h1 style={s.h1}>
               Pronto{primeiro ? `, ${primeiro}` : ""}!
             </h1>
-            <p style={s.p}>
-              <strong>{titulo}</strong> está indo pro seu e-mail. Se não aparecer em 2 minutos, confere a aba Promoções.
-            </p>
+            {urlEntrega ? (
+              <>
+                <a href={urlEntrega} className="isca-btn" style={{ textAlign: "center", textDecoration: "none" }}>
+                  {palavra === "TABELA" ? "Abrir a tabela das IAs" : `Abrir ${titulo}`}
+                </a>
+                <p style={s.p}>Também te mandei por e-mail. Se não chegar em 1 minuto, olha o Spam ou Promoções.</p>
+              </>
+            ) : (
+              <p style={s.p}>
+                <strong>{titulo}</strong> está indo pro seu e-mail. Se não aparecer em 2 minutos, confere a aba Promoções.
+              </p>
+            )}
             <a href="https://instagram.com/kawan.labs" target="_blank" rel="noopener noreferrer" style={s.link}>
               Me chama no direct: @kawan.labs
             </a>
