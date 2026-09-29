@@ -115,7 +115,7 @@ export async function POST(req: Request) {
     }
   }
 
-  const resposta = NextResponse.json({ status: "enviado", nome: primeiroNome(nome) });
+  const resposta = NextResponse.json({ status: "enviado", nome: primeiroNome(nome), url: iscaRow.url_entrega || "" });
 
   // antirrepetição: mesmo lead e isca nos últimos 10 min não reenvia
   const desde = new Date(Date.now() - 10 * 60 * 1000).toISOString();
