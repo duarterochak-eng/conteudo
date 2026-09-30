@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import IconeWhatsapp from "./icone-whatsapp";
+import IconeWhatsapp from "@/app/isca/[palavra]/icone-whatsapp";
 import {
   DOR_ROTULO,
   DOR_VALORES,
@@ -13,7 +13,19 @@ import {
   type Tamanho,
 } from "@/lib/lead";
 
-const COR = { fundo: "#F2F0EB", texto: "#141210", laranja: "#E0521D", erro: "#B42A2A", borda: "#D9D5CC", suave: "#6F6961" };
+// cores por variante (CSS vars em .cl-hero / .cl-secao, no fim do arquivo)
+const COR = {
+  fundo: "var(--cl-fundo)",
+  texto: "var(--cl-texto)",
+  laranja: "#E0521D",
+  erro: "var(--cl-erro)",
+  borda: "var(--cl-borda)",
+  suave: "var(--cl-suave)",
+  cartao: "var(--cl-cartao)",
+};
+
+/** hero: tela cheia de fundo claro (/isca/PALAVRA). secao: cartão escuro dentro da landing. */
+export type Variante = "hero" | "secao";
 
 type Etapa = "email" | "cadastro" | "reaceite" | "pronto";
 type Conversa = "oferecer" | "pedido" | "nao";
@@ -25,7 +37,20 @@ export type Capa = { antes: string; destaque: string; sub: string; botao: string
 const ERRO_GERAL = "Deu erro aqui. Tenta de novo em instantes.";
 const SEM_CONEXAO = "Sem conexão. Confere a internet e tenta de novo.";
 
-export default function Captura({ palavra, titulo, capa }: { palavra: string; titulo: string; capa?: Capa }) {
+export default function CapturaLead({
+  isca: palavra,
+  titulo,
+  variante,
+  capa,
+  depois,
+}: {
+  isca: string;
+  titulo: string;
+  variante: Variante;
+  capa?: Capa;
+  /** Aparece embaixo da captura só depois da entrega (etapa "pronto"). Só na variante hero. */
+  depois?: React.ReactNode;
+}) {
   const [etapa, setEtapa] = useState<Etapa>("email");
   const [email, setEmail] = useState("");
   const [site, setSite] = useState("");
@@ -141,24 +166,21 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
   }
 
   const textoAceite = `Quero receber ${titulo} e novidades do @kawan.labs por e-mail. Posso sair quando quiser.`;
+  const hero = variante === "hero";
+  // na landing o h1 é o do topo da página
+  const H = hero ? "h1" : "h2";
 
-  return (
-    <main style={s.main}>
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Anton&family=Inter+Tight:wght@400;500;600;700&display=swap"
-        // @ts-ignore React 19 hoisting
-        precedence="default"
-      />
+  const conteudo = (
+    <>
       <style>{css}</style>
-      <div style={s.caixa}>
-        <div style={s.marca}>@kawan.labs</div>
+      <div style={hero ? s.caixa : s.caixaSecao}>
+        {hero && <div style={s.marca}>@kawan.labs</div>}
 
         {etapa === "email" && (
           <form onSubmit={passoEmail} noValidate style={s.form}>
-            <h1 style={s.h1}>
+            <H style={hero ? s.h1 : s.h1Secao}>
               {capa ? capa.antes : "Receba"} <span style={{ color: COR.laranja }}>{capa ? capa.destaque : titulo}</span>
-            </h1>
+            </H>
             <p style={s.p}>{capa ? capa.sub : "Coloca seu e-mail que chega na hora."}</p>
             <Campo erro={erros.email}>
               <input
@@ -169,7 +191,8 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
                 placeholder="seu@email.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoFocus
+                // na landing o foco automático rolaria a página até o formulário
+                autoFocus={hero}
               />
             </Campo>
             <input
@@ -189,7 +212,7 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
 
         {etapa === "cadastro" && (
           <form onSubmit={passoCadastro} noValidate style={s.form}>
-            <h1 style={s.h1}>Falta pouco</h1>
+            <H style={hero ? s.h1 : s.h1Secao}>Falta pouco</H>
             <p style={s.p}>Só na primeira vez. Depois é só o e-mail.</p>
 
             <Campo rotulo="Seu nome" erro={erros.nome}>
@@ -259,9 +282,9 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
 
         {etapa === "reaceite" && (
           <form onSubmit={passoReaceite} noValidate style={s.form}>
-            <h1 style={s.h1}>
+            <H style={hero ? s.h1 : s.h1Secao}>
               Receba <span style={{ color: COR.laranja }}>{titulo}</span>
-            </h1>
+            </H>
             <Aceite marcado={aceite} onChange={setAceite} texto={textoAceite} />
             <Botao carregando={carregando}>Receber</Botao>
             {erros.geral && <Erro>{erros.geral}</Erro>}
@@ -270,9 +293,9 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
 
         {etapa === "pronto" && (
           <div style={s.form}>
-            <h1 style={s.h1}>
+            <H style={hero ? s.h1 : s.h1Secao}>
               Pronto{primeiro ? `, ${primeiro}` : ""}!
-            </h1>
+            </H>
             {urlEntrega ? (
               <>
                 <a href={urlEntrega} className="isca-btn" style={{ textAlign: "center", textDecoration: "none" }}>
@@ -314,7 +337,20 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
 
         <Contato palavra={palavra} instagram={etapa === "pronto"} />
       </div>
-    </main>
+    </>
+  );
+
+  if (!hero) return <div className="cl-secao" style={s.secao}>{conteudo}</div>;
+
+  const comDepois = etapa === "pronto" && !!depois;
+  return (
+    <>
+      {/* com as seções embaixo, a tela Pronto não precisa ocupar a altura toda */}
+      <main className="cl-hero" style={comDepois ? { ...s.main, minHeight: 0 } : s.main}>
+        {conteudo}
+      </main>
+      {comDepois && depois}
+    </>
   );
 }
 
@@ -401,37 +437,54 @@ function Erro({ children }: { children: React.ReactNode }) {
   return <span role="alert" style={{ color: COR.erro, fontSize: 14 }}>{children}</span>;
 }
 
+const CORPO = "var(--f-corpo, 'Inter Tight'), system-ui, sans-serif";
+const TITULO = "var(--f-titulo, Anton), Impact, sans-serif";
+
 const s: Record<string, React.CSSProperties> = {
   main: {
     minHeight: "100dvh",
     background: COR.fundo,
     color: COR.texto,
-    fontFamily: "'Inter Tight', system-ui, sans-serif",
+    fontFamily: CORPO,
     padding: "32px 20px",
     display: "flex",
     justifyContent: "center",
   },
   caixa: { width: "100%", maxWidth: 440, display: "grid", gap: 24, alignContent: "start", paddingTop: "6vh" },
+  secao: { background: COR.fundo, color: COR.texto, fontFamily: CORPO, maxWidth: 600, margin: "0 auto", boxSizing: "border-box" },
+  caixaSecao: { display: "grid", gap: 24 },
   marca: { fontWeight: 600, fontSize: 14, letterSpacing: 0.3 },
   form: { display: "grid", gap: 18, position: "relative" },
-  h1: { fontFamily: "Anton, Impact, sans-serif", fontWeight: 400, fontSize: 40, lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
+  h1: { fontFamily: TITULO, fontWeight: 400, fontSize: 40, lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
+  h1Secao: { fontFamily: TITULO, fontWeight: 400, fontSize: "clamp(30px, 6vw, 44px)", lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
   p: { fontSize: 17, lineHeight: 1.5, margin: 0 },
   contato: { display: "grid", gap: 12, paddingTop: 20, borderTop: `1px solid ${COR.borda}` },
   contatoTexto: { fontSize: 15, color: COR.suave },
   suave: { fontSize: 14, color: COR.suave },
-  cartao: { display: "grid", gap: 12, padding: 16, border: `1.5px solid ${COR.borda}`, borderRadius: 12, background: "#fff" },
+  cartao: { display: "grid", gap: 12, padding: 16, border: `1.5px solid ${COR.borda}`, borderRadius: 12, background: COR.cartao },
   link: { fontSize: 15, color: COR.texto, fontWeight: 600, textDecorationColor: COR.laranja, textUnderlineOffset: 4 },
 };
 
 const css = `
-  body { margin: 0; background: ${COR.fundo}; }
-  .isca-in { width: 100%; box-sizing: border-box; font: inherit; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; outline: none; }
-  .isca-in:focus { border-color: ${COR.texto}; }
-  .isca-btn { font: inherit; font-weight: 700; font-size: 17px; padding: 16px; border: 0; border-radius: 12px; background: ${COR.texto}; color: #fff; cursor: pointer; }
+  body { margin: 0; background: #F2F0EB; }
+  .cl-hero {
+    --cl-fundo: #F2F0EB; --cl-texto: #141210; --cl-erro: #B42A2A; --cl-borda: #D9D5CC; --cl-suave: #6F6961; --cl-cartao: #fff;
+    --cl-foco: #141210; --cl-btn: #141210; --cl-btn-texto: #fff; --cl-opt: #fff; --cl-opt-on-texto: #fff;
+  }
+  .cl-secao {
+    --cl-fundo: #141210; --cl-texto: #F2F0EB; --cl-erro: #FF9C8C; --cl-borda: #3A3631; --cl-suave: #B5AFA3; --cl-cartao: #1F1C19;
+    --cl-foco: #E0521D; --cl-btn: #E0521D; --cl-btn-texto: #141210; --cl-opt: #1F1C19; --cl-opt-on-texto: #141210;
+    padding: 32px 20px; border-radius: 20px;
+  }
+  @media (min-width: 640px) { .cl-secao { padding: 48px; } }
+  .isca-in { width: 100%; box-sizing: border-box; font: inherit; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: #141210; outline: none; }
+  .cl-secao .isca-in { background: #F7F6F2; border-color: #F7F6F2; }
+  .isca-in:focus { border-color: var(--cl-foco); }
+  .isca-btn { font: inherit; font-weight: 700; font-size: 17px; padding: 16px; border: 0; border-radius: 12px; background: var(--cl-btn); color: var(--cl-btn-texto); cursor: pointer; }
   .isca-btn:disabled { opacity: .6; cursor: wait; }
-  .isca-opt { font: inherit; font-weight: 600; font-size: 17px; padding: 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; cursor: pointer; }
+  .isca-opt { font: inherit; font-weight: 600; font-size: 17px; padding: 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: var(--cl-opt); color: ${COR.texto}; cursor: pointer; }
   .isca-opt:disabled { opacity: .6; cursor: wait; }
-  .isca-opt.on { border-color: ${COR.laranja}; background: ${COR.laranja}; color: #fff; }
-  .isca-zap { display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 700; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; text-decoration: none; }
+  .isca-opt.on { border-color: ${COR.laranja}; background: ${COR.laranja}; color: var(--cl-opt-on-texto); }
+  .isca-zap { display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 700; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: var(--cl-opt); color: ${COR.texto}; text-decoration: none; }
   .isca-zap:hover { border-color: #25D366; }
 `;
