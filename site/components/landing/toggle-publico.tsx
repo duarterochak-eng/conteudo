@@ -1,28 +1,23 @@
 "use client";
-import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import type { Publico } from "@/data/servicos";
+import { usePublico } from "./publico";
 
 const OPCOES: { valor: Publico; rotulo: string }[] = [
   { valor: "empresa", rotulo: "Tenho empresa" },
   { valor: "profissional", rotulo: "Trabalho por conta" },
 ];
 
-/** "Você é:" empresa ou profissional. Fica em ?p=, então o link compartilhado abre no mesmo modo. */
-export default function TogglePublico({ publico }: { publico: Publico }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  // o botão muda na hora; o conteúdo troca quando o servidor devolve a página com o novo ?p=
-  const [atual, setAtual] = useState(publico);
-  useEffect(() => setAtual(publico), [publico]);
+/** "Você é:" empresa ou profissional. Grava em ?p= para o link compartilhado abrir no mesmo modo. */
+export default function TogglePublico() {
+  const { publico, setPublico } = usePublico();
 
   function escolher(p: Publico) {
-    if (p === atual) return;
-    setAtual(p);
-    // mantém utm_* e outros parâmetros que vieram no link
-    const params = new URLSearchParams(window.location.search);
-    params.set("p", p);
-    router.replace(`${pathname}?${params}`, { scroll: false });
+    if (p === publico) return;
+    setPublico(p);
+    // só a URL muda, sem ida ao servidor; mantém utm_*, outros parâmetros e o #
+    const url = new URL(window.location.href);
+    url.searchParams.set("p", p);
+    window.history.replaceState(null, "", url);
   }
 
   return (
@@ -33,8 +28,8 @@ export default function TogglePublico({ publico }: { publico: Publico }) {
           <button
             key={o.valor}
             type="button"
-            className={atual === o.valor ? "on" : undefined}
-            aria-pressed={atual === o.valor}
+            className={publico === o.valor ? "on" : undefined}
+            aria-pressed={publico === o.valor}
             onClick={() => escolher(o.valor)}
           >
             {o.rotulo}

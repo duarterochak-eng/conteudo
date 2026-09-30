@@ -32,7 +32,7 @@ type Conversa = "oferecer" | "pedido" | "nao";
 type Erros = Partial<Record<"email" | "nome" | "tem_empresa" | "tamanho" | "dor" | "conversar" | "whatsapp" | "aceite" | "geral", string>>;
 
 /** Textos da capa. Sem isso vale o padrão das iscas ("Receba {titulo}"). */
-export type Capa = { antes: string; destaque: string; sub: string; botao: string };
+export type Capa = { eyebrow?: string; antes: string; destaque?: string; sub: string; botao: string };
 
 const ERRO_GERAL = "Deu erro aqui. Tenta de novo em instantes.";
 const SEM_CONEXAO = "Sem conexão. Confere a internet e tenta de novo.";
@@ -178,8 +178,15 @@ export default function CapturaLead({
 
         {etapa === "email" && (
           <form onSubmit={passoEmail} noValidate style={s.form}>
+            {capa?.eyebrow && <p style={s.eyebrow}>{capa.eyebrow}</p>}
             <H style={hero ? s.h1 : s.h1Secao}>
-              {capa ? capa.antes : "Receba"} <span style={{ color: COR.laranja }}>{capa ? capa.destaque : titulo}</span>
+              {capa ? capa.antes : "Receba"}
+              {(capa ? capa.destaque : titulo) && (
+                <>
+                  {" "}
+                  <span style={{ color: COR.laranja }}>{capa ? capa.destaque : titulo}</span>
+                </>
+              )}
             </H>
             <p style={s.p}>{capa ? capa.sub : "Coloca seu e-mail que chega na hora."}</p>
             <Campo erro={erros.email}>
@@ -454,6 +461,8 @@ const s: Record<string, React.CSSProperties> = {
   secao: { background: COR.fundo, color: COR.texto, fontFamily: CORPO, maxWidth: 600, margin: "0 auto", boxSizing: "border-box" },
   caixaSecao: { display: "grid", gap: 24 },
   marca: { fontWeight: 600, fontSize: 14, letterSpacing: 0.3 },
+  // o form tem gap de 18px; o eyebrow fica colado no título
+  eyebrow: { margin: "0 0 -10px", fontSize: 13, fontWeight: 600, letterSpacing: "0.08em", textTransform: "uppercase", color: COR.suave },
   form: { display: "grid", gap: 18, position: "relative" },
   h1: { fontFamily: TITULO, fontWeight: 400, fontSize: 40, lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
   h1Secao: { fontFamily: TITULO, fontWeight: 400, fontSize: "clamp(30px, 6vw, 44px)", lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
