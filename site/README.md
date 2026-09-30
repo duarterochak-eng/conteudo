@@ -22,7 +22,7 @@ Lead quente = tem empresa + `quer_conversar = true`. Vira quente de três jeitos
 
 - A virada `false → true` é um único `UPDATE ... WHERE quer_conversar = false`. Só quem virou o lead avisa, então clique duplo, aba repetida ou nova isca não geram aviso repetido.
 - O aviso é um POST no `N8N_LEAD_QUENTE_WEBHOOK_URL` (header `x-lead-secret`, timeout de 8 s), disparado depois da resposta com `after()`. Corpo: `{ nome, email, whatsapp, ramo, tamanho, maior_dor, isca, origem }`, com `whatsapp` só em dígitos com DDI 55 e `tamanho`/`maior_dor` em texto legível.
-- Se o n8n estiver fora ou a variável não existir, só loga (id do lead, nunca o e-mail ou o telefone). O lead já está salvo com `quer_conversar = true` e `quer_conversar_em`, então dá para achar quem ficou sem aviso: `select * from leads where quer_conversar order by quer_conversar_em desc`.
+- Se o n8n estiver fora ou a variável não existir, só loga (id do lead, nunca o e-mail ou o telefone). O lead já está salvo com `quer_conversar = true` e `quer_conversar_em`, então nenhum pedido se perde: `select nome, email, whatsapp, ramo, tamanho, maior_dor, quer_conversar_em from leads where quer_conversar order by quer_conversar_em desc` lista todos os leads quentes.
 - WhatsApp é normalizado no servidor e no navegador (`lib/lead.ts`): só dígitos, DDI 55 quando vier DDD + número, válido com 12 ou 13 dígitos.
 
 ## Variáveis na Vercel
