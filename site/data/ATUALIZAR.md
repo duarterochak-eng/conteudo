@@ -16,7 +16,7 @@ Quem atualiza: a rotina semanal do Claude (segunda, 06:25 de Cuiabá) ou o Kawan
 
 ## Passo a passo (semanal)
 
-1. `git checkout main && git pull`, depois `git checkout -b tabela/AAAA-MM-DD` (data de hoje).
+1. **Tem PR pendente?** Se já existe PR aberto de uma branch `tabela/*` (semana anterior sem merge), não abra outro: `git fetch && git checkout tabela/<data-antiga> && git merge origin/main`, faça a conferência em cima dela, push normal (nunca force) e atualize o título e o texto do PR. Se não existe: `git checkout main && git pull`, depois `git checkout -b tabela/AAAA-MM-DD` (data de hoje, America/Cuiaba).
 2. `cd site && npm install && npm run tabela:check` (tem que passar antes de mexer).
 3. **Câmbio.** Cotação PTAX de venda do último dia útil (notícia do dia serve; o site do Banco Central costuma bloquear leitura automática). Atualiza `cambio.brl_por_usd`, `cambio.data` e `cambio.fontes`. Confirma se o IOF do cartão no exterior segue em 3,5% (`cambio.iof`, fração: 0.035).
 4. **Novidades.** Procura o que saiu desde `atualizada_em`:
@@ -28,7 +28,8 @@ Quem atualiza: a rotina semanal do Claude (segunda, 06:25 de Cuiabá) ou o Kawan
 7. **`mudancas`**: um item por acontecimento visível (modelo novo, plano novo, preço mudou, correção, modelo saiu). Título curto (até 80 caracteres), detalhe de 1 ou 2 frases, fonte. Mantém no máximo 20 itens; apaga os mais velhos (o histórico fica no git).
 8. **Datas.** `verificada_em` = hoje (America/Cuiaba). `atualizada_em` = hoje **só se algo visível mudou**. `verificado_em` de cada linha que você reconferiu = hoje.
 9. `npm run tabela:check` e `npm run build` (dentro de `site/`). Os dois têm que passar. Se o build reprovar, o erro diz a linha do JSON: corrige o JSON, nunca o validador.
-10. Commit só do JSON (e deste arquivo, se o processo mudou), push da branch, PR para `main` com o texto abaixo.
+10. Commit só do JSON (e deste arquivo, se o processo mudou), push da branch e PR para `main` com o texto abaixo. Não há `gh` no ambiente: use a API (`curl -X POST https://api.github.com/repos/duarterochak-eng/conteudo/pulls -H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json" -H "Content-Type: application/json" --data-binary @pr.json`; sem o `Content-Type` a API responde 415). Se a API não funcionar, a branch já está no GitHub: mande ao Kawan o link `https://github.com/duarterochak-eng/conteudo/pull/new/<branch>`.
+11. **Avise o Kawan** (mensagem de 3 linhas): link do PR, link do preview e "pode dar merge sem olhar" ou o que ele precisa decidir. Antes, se a Vercel estiver conectada, confirme que o deploy da branch ficou `READY` (projeto `kawanlabs`).
 
 ## Como o JSON funciona (o que costuma dar dúvida)
 
