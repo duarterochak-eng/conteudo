@@ -1,0 +1,452 @@
+/* Landing da raiz e seções depois da entrega em /isca/PALAVRA. Mobile first; desktop a partir de 960px. */
+
+.lp {
+  --lp-fundo: #f2f0eb;
+  --lp-texto: #141210;
+  --lp-apoio: #4a4740;
+  --lp-apoio2: #6b665c;
+  --lp-borda: #dcd7cb;
+  --lp-faixa: #e8e4da;
+  --lp-cartao: #f7f6f2;
+  --lp-laranja: #e0521d;
+  background: var(--lp-fundo);
+  color: var(--lp-texto);
+  font-family: var(--f-corpo), system-ui, sans-serif;
+  font-size: 17px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+.lp *,
+.lp *::before,
+.lp *::after {
+  box-sizing: border-box;
+}
+.lp a:focus-visible,
+.lp button:focus-visible {
+  outline: 3px solid var(--lp-laranja);
+  outline-offset: 2px;
+}
+
+.lp-wrap {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+.lp-secao {
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+.lp-faixa {
+  background: var(--lp-faixa);
+}
+
+/* textos */
+.lp-h1,
+.lp-h2,
+.lp-h3,
+.lp-num {
+  font-family: var(--f-titulo), Impact, sans-serif;
+  font-weight: 400;
+}
+.lp-h1 {
+  margin: 12px 0 0;
+  font-size: clamp(44px, 8vw, 88px);
+  line-height: 1.2;
+  text-transform: uppercase;
+  max-width: 10em;
+}
+.lp-grifo {
+  background: var(--lp-laranja);
+  color: var(--lp-fundo);
+  padding: 0 0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.lp-h2 {
+  margin: 0;
+  font-size: clamp(34px, 7vw, 60px);
+  line-height: 1.2;
+  text-transform: uppercase;
+  max-width: 24ch;
+}
+.lp-h3 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.2;
+}
+.lp-num {
+  font-size: 22px;
+  line-height: 1;
+  color: var(--lp-laranja);
+}
+.lp-num-grande {
+  font-size: 44px;
+}
+.lp-eyebrow {
+  margin: 28px 0 0;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lp-apoio2);
+}
+.lp-sub {
+  margin: 20px 0 0;
+  font-size: 19px;
+  color: var(--lp-apoio);
+  max-width: 34ch;
+}
+.lp-intro {
+  margin: 16px 0 0;
+  font-size: 18px;
+  color: var(--lp-apoio);
+  max-width: 60ch;
+}
+.lp-texto {
+  margin: 16px 0 0;
+  font-size: 18px;
+  color: var(--lp-apoio);
+  max-width: 60ch;
+}
+
+/* botões e links: alvo de toque de pelo menos 44px */
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 24px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--lp-texto);
+  color: var(--lp-fundo);
+  font: inherit;
+  font-weight: 700;
+  font-size: 17px;
+  text-decoration: none;
+  text-align: center;
+}
+.lp-btn-sec {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--lp-texto);
+  border-radius: 12px;
+  color: var(--lp-texto);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.lp-btn-sec:hover {
+  background: var(--lp-texto);
+  color: var(--lp-fundo);
+}
+.lp-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--lp-texto);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-color: var(--lp-laranja);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* header */
+.lp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+}
+.lp-logo {
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.lp-logo span,
+.lp-ponto {
+  color: var(--lp-laranja);
+}
+
+/* hero */
+.lp-hero {
+  padding-top: 24px;
+  padding-bottom: 72px;
+}
+.lp-hero-ctas {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 24px;
+}
+.lp-hero-ctas .lp-btn {
+  width: 100%;
+}
+
+/* toggle empresa / profissional */
+.lp-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+}
+.lp-toggle-rotulo {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--lp-apoio);
+}
+.lp-toggle-opcoes {
+  display: inline-flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1.5px solid var(--lp-borda);
+  border-radius: 14px;
+  background: var(--lp-cartao);
+}
+.lp-toggle button {
+  min-height: 44px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--lp-texto);
+  font: inherit;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+}
+.lp-toggle button.on {
+  background: var(--lp-texto);
+  color: var(--lp-fundo);
+}
+.lp-servicos-toggle {
+  margin-top: 24px;
+}
+
+/* como eu trabalho */
+.lp-passos {
+  margin-top: 40px;
+  display: grid;
+  gap: 32px;
+}
+.lp-passo {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  padding-top: 20px;
+  border-top: 1.5px solid var(--lp-texto);
+}
+.lp-passo p {
+  margin: 0;
+  color: var(--lp-apoio);
+}
+
+/* serviços */
+.lp-grade {
+  margin-top: 40px;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: minmax(0, 1fr);
+}
+.lp-grade > div {
+  display: flex;
+}
+.lp-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  padding: 24px;
+  border: 2px solid var(--lp-borda);
+  border-radius: 16px;
+  background: var(--lp-cartao);
+  color: var(--lp-texto);
+  text-decoration: none;
+}
+.lp-card:hover {
+  border-color: var(--lp-texto);
+}
+.lp-card-destaque,
+.lp-card-destaque:hover {
+  border-color: var(--lp-laranja);
+}
+.lp-card p {
+  margin: 0;
+  font-size: 16px;
+  color: var(--lp-apoio);
+}
+.lp-card-cta {
+  margin-top: auto;
+  padding-top: 8px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+/* #tabela sem a isca: só o WhatsApp, no mesmo cartão escuro da captura */
+.lp-escuro {
+  display: grid;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 32px 20px;
+  border-radius: 20px;
+  background: var(--lp-texto);
+  color: var(--lp-fundo);
+}
+.lp-zap-escuro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 52px;
+  padding: 0 16px;
+  border: 1.5px solid #3a3631;
+  border-radius: 12px;
+  color: var(--lp-fundo);
+  font-weight: 700;
+  text-decoration: none;
+}
+.lp-zap-escuro:hover {
+  border-color: #25d366;
+}
+
+/* quem sou */
+.lp-quem {
+  display: grid;
+  gap: 24px;
+}
+.lp-foto {
+  display: block;
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.lp-foto-inicial {
+  display: grid;
+  place-items: center;
+  background: var(--lp-faixa);
+  font-family: var(--f-titulo), Impact, sans-serif;
+  font-size: 40px;
+  color: var(--lp-texto);
+}
+
+/* contato */
+.lp-contato .lp-btn {
+  margin-top: 28px;
+}
+
+/* rodapé */
+.lp-rodape {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  padding-top: 24px;
+  padding-bottom: 32px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lp-apoio2);
+}
+.lp-rodape a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--lp-apoio2);
+}
+
+@media (min-width: 640px) {
+  .lp-hero-ctas .lp-btn {
+    width: auto;
+  }
+  .lp-grade {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .lp-escuro {
+    padding: 48px;
+  }
+}
+
+@media (min-width: 960px) {
+  .lp-wrap {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+  .lp-secao {
+    padding-top: 112px;
+    padding-bottom: 112px;
+  }
+  .lp-hero {
+    padding-top: 56px;
+    padding-bottom: 112px;
+  }
+  .lp-sub {
+    font-size: 21px;
+  }
+  .lp-passos {
+    margin-top: 56px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 48px;
+  }
+  .lp-grade {
+    margin-top: 56px;
+    gap: 20px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .lp-quem {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
+  }
+  .lp-foto {
+    width: 220px;
+    height: 220px;
+    border-radius: 20px;
+  }
+  .lp-foto-inicial {
+    font-size: 96px;
+  }
+}
+
+/* animações: só com prefers-reduced-motion liberado; sem isso, tudo aparece direto */
+@media (prefers-reduced-motion: no-preference) {
+  html:has(.lp) {
+    scroll-behavior: smooth;
+  }
+  .lp-rv,
+  .lp-rv-grade > * {
+    transition:
+      opacity 0.6s ease,
+      transform 0.6s ease;
+  }
+  .lp-rv-grade > * {
+    transition-delay: calc(var(--i, 0) * 60ms);
+  }
+  .lp-rv:not(.lp-rv-on),
+  .lp-rv-grade:not(.lp-rv-on) > * {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  .lp-card {
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
+  }
+  .lp-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(20, 18, 16, 0.08);
+  }
+}

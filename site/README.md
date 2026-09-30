@@ -2,8 +2,9 @@
 
 Site público do @kawan.labs (sem senha). Projeto separado na Vercel, Root Directory = `site`.
 
-- `/` → link da bio: mesmo fluxo das iscas com a isca `BIO` e textos próprios (`app/page.tsx`). Sem a `BIO` ativa em `iscas`, redireciona para https://instagram.com/kawan.labs
-- `/isca/PALAVRA` → captura de lead do "Comenta PALAVRA" (tabela `iscas`, `ativa = true`)
+- `/` → landing (`components/landing/`): hero, toggle empresa/profissional (`?p=empresa|profissional`), como eu trabalho, serviços (`data/servicos.ts`, cada card abre o WhatsApp citando o serviço), captura da isca `BIO` no bloco `#tabela`, quem sou e contato. Sem a `BIO` ativa (ou com o Supabase fora/lento, 3 s), a landing sai igual e o `#tabela` mostra só o WhatsApp
+- `/isca/PALAVRA` → captura de lead do "Comenta PALAVRA" (tabela `iscas`, `ativa = true`). Só o formulário na tela; serviços, quem sou e contato aparecem embaixo depois da entrega. O fluxo de captura fica em `components/captura-lead.tsx` (variante `hero` aqui, `secao` na landing)
+- Foto do quem sou: `public/kawan.jpg` (também vira og:image da raiz). Sem o arquivo, a landing mostra a inicial; o build detecta sozinho (`next.config.mjs`)
 - `/api/isca` → grava em `leads` e `lead_iscas` e chama o webhook do n8n
 - `/api/isca/conversar` → botão "Quero conversar" da tela Pronto (lead que já tinha cadastro)
 - `/tabela-ia` → tabela das IAs, lida de `data/tabela-ia.json` (ver "Tabela das IAs" abaixo). `/tabela-ia/index.html` continua abrindo a mesma página, por causa dos links já enviados
@@ -35,7 +36,7 @@ Lead quente = tem empresa + `quer_conversar = true`. Vira quente de três jeitos
 | `N8N_LEAD_QUENTE_WEBHOOK_URL` | webhook do n8n que avisa o Kawan no WhatsApp quando um lead fica quente (`.../webhook/lead-quente`). Sem ela o site funciona; só não avisa |
 | `N8N_LEAD_SECRET` | segredo enviado no header `x-lead-secret` nos dois webhooks |
 
-Colunas que o código usa em `leads`: `tamanho`, `maior_dor`, `quer_conversar`, `quer_conversar_em`. Rodar o SQL delas **antes** de publicar: sem as colunas, a captura responde erro 500. A isca `BIO` também precisa existir em `iscas` (senão `/` volta a redirecionar para o Instagram).
+Colunas que o código usa em `leads`: `tamanho`, `maior_dor`, `quer_conversar`, `quer_conversar_em`. Rodar o SQL delas **antes** de publicar: sem as colunas, a captura responde erro 500. A isca `BIO` também precisa existir em `iscas` (senão o `#tabela` da landing mostra só o WhatsApp).
 
 ## Tabela das IAs
 

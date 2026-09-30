@@ -43,7 +43,7 @@ O app Next.js fica em `conteudo/` (é o root directory na Vercel).
 
 ## site/ (público)
 
-Projeto `kawanlabs` na Vercel (root `site`): captura de lead (`/isca/PALAVRA`) e a Tabela das IAs (`/tabela-ia`). A tabela lê `site/data/tabela-ia.json`; só esse arquivo muda no dia a dia, sempre por PR (preview da Vercel, merge = publica). Passo a passo em `site/data/ATUALIZAR.md`.
+Projeto `kawanlabs` na Vercel (root `site`): landing na raiz (`components/landing/`, serviços em `data/servicos.ts`), captura de lead (`/isca/PALAVRA`, `components/captura-lead.tsx`) e a Tabela das IAs (`/tabela-ia`). A tabela lê `site/data/tabela-ia.json`; só esse arquivo muda no dia a dia, sempre por PR (preview da Vercel, merge = publica). Passo a passo em `site/data/ATUALIZAR.md`.
 
 ## Template (aprovado, não mudar sem pedido)
 
