@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import IconeWhatsapp from "./icone-whatsapp";
 import {
   DOR_ROTULO,
   DOR_VALORES,
@@ -317,25 +318,22 @@ export default function Captura({ palavra, titulo, capa }: { palavra: string; ti
   );
 }
 
-/** Link direto pro WhatsApp do Kawan, com mensagem pronta que já diz de onde a pessoa veio. */
+/** Botão direto pro WhatsApp do Kawan, com mensagem pronta que já diz de onde a pessoa veio. */
 function Contato({ palavra, instagram }: { palavra: string; instagram?: boolean }) {
   const href = linkWhatsapp(`Oi Kawan! Vim pelo Instagram (${palavra}) e queria conversar sobre IA na minha empresa.`);
   return (
-    <p style={s.contato}>
-      Prefere falar direto?{" "}
-      <a href={href} target="_blank" rel="noopener noreferrer" style={s.link}>
+    <div style={s.contato}>
+      <span style={s.contatoTexto}>Prefere falar direto?</span>
+      <a href={href} target="_blank" rel="noopener noreferrer" className="isca-zap">
+        <IconeWhatsapp />
         Me chama no WhatsApp
       </a>
       {instagram && (
-        <>
-          {" "}
-          ou{" "}
-          <a href="https://instagram.com/kawan.labs" target="_blank" rel="noopener noreferrer" style={s.link}>
-            no Instagram
-          </a>
-        </>
+        <a href="https://instagram.com/kawan.labs" target="_blank" rel="noopener noreferrer" style={s.link}>
+          Ou siga @kawan.labs no Instagram
+        </a>
       )}
-    </p>
+    </div>
   );
 }
 
@@ -418,10 +416,11 @@ const s: Record<string, React.CSSProperties> = {
   form: { display: "grid", gap: 18, position: "relative" },
   h1: { fontFamily: "Anton, Impact, sans-serif", fontWeight: 400, fontSize: 40, lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
   p: { fontSize: 17, lineHeight: 1.5, margin: 0 },
-  contato: { fontSize: 15, lineHeight: 1.5, margin: 0, color: COR.suave },
+  contato: { display: "grid", gap: 12, paddingTop: 20, borderTop: `1px solid ${COR.borda}` },
+  contatoTexto: { fontSize: 15, color: COR.suave },
   suave: { fontSize: 14, color: COR.suave },
   cartao: { display: "grid", gap: 12, padding: 16, border: `1.5px solid ${COR.borda}`, borderRadius: 12, background: "#fff" },
-  link: { color: COR.texto, fontWeight: 600, textDecorationColor: COR.laranja, textUnderlineOffset: 4 },
+  link: { fontSize: 15, color: COR.texto, fontWeight: 600, textDecorationColor: COR.laranja, textUnderlineOffset: 4 },
 };
 
 const css = `
@@ -433,4 +432,6 @@ const css = `
   .isca-opt { font: inherit; font-weight: 600; font-size: 17px; padding: 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; cursor: pointer; }
   .isca-opt:disabled { opacity: .6; cursor: wait; }
   .isca-opt.on { border-color: ${COR.laranja}; background: ${COR.laranja}; color: #fff; }
+  .isca-zap { display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 700; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; text-decoration: none; }
+  .isca-zap:hover { border-color: #25D366; }
 `;
