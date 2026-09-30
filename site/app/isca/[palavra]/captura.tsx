@@ -1,22 +1,48 @@
 "use client";
 import { useState } from "react";
+import IconeWhatsapp from "./icone-whatsapp";
+import {
+  DOR_ROTULO,
+  DOR_VALORES,
+  TAMANHO_ROTULO,
+  TAMANHO_VALORES,
+  linkWhatsapp,
+  normalizarWhatsapp,
+  whatsappValido,
+  type Dor,
+  type Tamanho,
+} from "@/lib/lead";
 
-const COR = { fundo: "#F2F0EB", texto: "#141210", laranja: "#E0521D", erro: "#B42A2A", borda: "#D9D5CC" };
+const COR = { fundo: "#F2F0EB", texto: "#141210", laranja: "#E0521D", erro: "#B42A2A", borda: "#D9D5CC", suave: "#6F6961" };
 
 type Etapa = "email" | "cadastro" | "reaceite" | "pronto";
-type Erros = Partial<Record<"email" | "nome" | "tem_empresa" | "whatsapp" | "aceite" | "geral", string>>;
+type Conversa = "oferecer" | "pedido" | "nao";
+type Erros = Partial<Record<"email" | "nome" | "tem_empresa" | "tamanho" | "dor" | "conversar" | "whatsapp" | "aceite" | "geral", string>>;
 
-export default function Captura({ palavra, titulo }: { palavra: string; titulo: string }) {
+/** Textos da capa. Sem isso vale o padrão das iscas ("Receba {titulo}"). */
+export type Capa = { antes: string; destaque: string; sub: string; botao: string };
+
+const ERRO_GERAL = "Deu erro aqui. Tenta de novo em instantes.";
+const SEM_CONEXAO = "Sem conexão. Confere a internet e tenta de novo.";
+
+export default function Captura({ palavra, titulo, capa }: { palavra: string; titulo: string; capa?: Capa }) {
   const [etapa, setEtapa] = useState<Etapa>("email");
   const [email, setEmail] = useState("");
   const [site, setSite] = useState("");
   const [nome, setNome] = useState("");
   const [temEmpresa, setTemEmpresa] = useState<boolean | null>(null);
   const [ramo, setRamo] = useState("");
+  const [tamanho, setTamanho] = useState<Tamanho | null>(null);
+  const [dor, setDor] = useState<Dor | null>(null);
+  const [querConversar, setQuerConversar] = useState<boolean | null>(null);
   const [whatsapp, setWhatsapp] = useState("");
   const [aceite, setAceite] = useState(false);
   const [primeiro, setPrimeiro] = useState("");
   const [urlEntrega, setUrlEntrega] = useState("");
+  const [conversa, setConversa] = useState<Conversa>("nao");
+  const [temWhatsapp, setTemWhatsapp] = useState(false);
+  const [pedindoZap, setPedindoZap] = useState(false);
+  const [zapConversa, setZapConversa] = useState("");
   const [carregando, setCarregando] = useState(false);
   const [erros, setErros] = useState<Erros>({});
 
@@ -31,14 +57,20 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
       });
       const j = await r.json().catch(() => ({}));
       if (!r.ok) {
-        setErros({ geral: j.erro || "Deu erro aqui. Tenta de novo em instantes." });
+        setErros({ geral: j.erro || ERRO_GERAL });
         return;
       }
       if (j.status === "cadastro") setEtapa("cadastro");
       else if (j.status === "reaceite") { setPrimeiro(j.nome || ""); setEtapa("reaceite"); }
-      else { setPrimeiro(j.nome || primeiro); setUrlEntrega(j.url || ""); setEtapa("pronto"); }
+      else {
+        setPrimeiro(j.nome || primeiro);
+        setUrlEntrega(j.url || "");
+        setConversa(j.conversar === "oferecer" || j.conversar === "pedido" ? j.conversar : "nao");
+        setTemWhatsapp(!!j.tem_whatsapp);
+        setEtapa("pronto");
+      }
     } catch {
-      setErros({ geral: "Sem conexão. Confere a internet e tenta de novo." });
+      setErros({ geral: SEM_CONEXAO });
     } finally {
       setCarregando(false);
     }
@@ -53,16 +85,25 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
   function passoCadastro(e: React.FormEvent) {
     e.preventDefault();
     const er: Erros = {};
-    const zap = whatsapp.replace(/\D/g, "");
+    const zap = normalizarWhatsapp(whatsapp);
     if (nome.trim().length < 2) er.nome = "Coloca seu nome.";
     if (temEmpresa === null) er.tem_empresa = "Escolhe uma opção.";
-    if (zap && (zap.length < 10 || zap.length > 13)) er.whatsapp = "Coloca o número com DDD.";
+    if (temEmpresa) {
+      if (!tamanho) er.tamanho = "Escolhe uma opção.";
+      if (!dor) er.dor = "Escolhe uma opção.";
+      if (querConversar === null) er.conversar = "Escolhe uma opção.";
+    }
+    if (whatsapp.trim() && !whatsappValido(zap)) er.whatsapp = "Coloca o número com DDD.";
+    else if (temEmpresa && querConversar && !zap) er.whatsapp = "Coloca seu WhatsApp com DDD pra eu te chamar.";
     if (!aceite) er.aceite = "Marca a caixa pra receber por e-mail.";
     if (Object.keys(er).length) return setErros(er);
     enviar({
       nome: nome.trim(),
       tem_empresa: temEmpresa,
       ramo: temEmpresa && ramo.trim() ? ramo.trim() : undefined,
+      tamanho: temEmpresa ? tamanho : undefined,
+      maior_dor: temEmpresa ? dor : undefined,
+      quer_conversar: temEmpresa ? querConversar : undefined,
       whatsapp: zap || undefined,
       aceite_email: true,
     });
@@ -71,6 +112,32 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
   function passoReaceite(e: React.FormEvent) {
     e.preventDefault();
     enviar({ aceite_email: aceite });
+  }
+
+  // botão "Quero conversar" da tela Pronto (lead que já tinha cadastro)
+  async function pedirConversa(e?: React.FormEvent) {
+    e?.preventDefault();
+    const zap = normalizarWhatsapp(zapConversa);
+    if (!temWhatsapp && !whatsappValido(zap)) return setErros({ whatsapp: "Coloca o número com DDD." });
+    setCarregando(true);
+    setErros({});
+    try {
+      const r = await fetch("/api/isca/conversar", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, isca: palavra, whatsapp: zap || undefined }),
+      });
+      const j = await r.json().catch(() => ({}));
+      if (!r.ok) {
+        setErros({ geral: j.erro || ERRO_GERAL });
+        return;
+      }
+      setConversa("pedido");
+    } catch {
+      setErros({ geral: SEM_CONEXAO });
+    } finally {
+      setCarregando(false);
+    }
   }
 
   const textoAceite = `Quero receber ${titulo} e novidades do @kawan.labs por e-mail. Posso sair quando quiser.`;
@@ -90,9 +157,9 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
         {etapa === "email" && (
           <form onSubmit={passoEmail} noValidate style={s.form}>
             <h1 style={s.h1}>
-              Receba <span style={{ color: COR.laranja }}>{titulo}</span>
+              {capa ? capa.antes : "Receba"} <span style={{ color: COR.laranja }}>{capa ? capa.destaque : titulo}</span>
             </h1>
-            <p style={s.p}>Coloca seu e-mail que chega na hora.</p>
+            <p style={s.p}>{capa ? capa.sub : "Coloca seu e-mail que chega na hora."}</p>
             <Campo erro={erros.email}>
               <input
                 className="isca-in"
@@ -115,7 +182,7 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
               onChange={(e) => setSite(e.target.value)}
               style={{ position: "absolute", left: -9999, width: 1, height: 1, opacity: 0 }}
             />
-            <Botao carregando={carregando}>Continuar</Botao>
+            <Botao carregando={carregando}>{capa ? capa.botao : "Continuar"}</Botao>
             {erros.geral && <Erro>{erros.geral}</Erro>}
           </form>
         )}
@@ -130,28 +197,58 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
             </Campo>
 
             <Campo rotulo="Você tem empresa?" erro={erros.tem_empresa} grupo>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
-                {[true, false].map((v) => (
-                  <button
-                    key={String(v)}
-                    type="button"
-                    className={`isca-opt${temEmpresa === v ? " on" : ""}`}
-                    onClick={() => setTemEmpresa(v)}
-                  >
-                    {v ? "Sim" : "Não"}
-                  </button>
-                ))}
-              </div>
+              <Opcoes<boolean>
+                colunas={2}
+                valor={temEmpresa}
+                onChange={setTemEmpresa}
+                itens={[
+                  { valor: true, rotulo: "Sim" },
+                  { valor: false, rotulo: "Não" },
+                ]}
+              />
             </Campo>
 
             {temEmpresa && (
-              <Campo rotulo="De quê?">
-                <input className="isca-in" maxLength={80} placeholder="Ex.: clínica, loja, escritório" value={ramo} onChange={(e) => setRamo(e.target.value)} />
-              </Campo>
+              <>
+                <Campo rotulo="De quê?">
+                  <input className="isca-in" maxLength={80} placeholder="Ex.: clínica, loja, escritório" value={ramo} onChange={(e) => setRamo(e.target.value)} />
+                </Campo>
+
+                <Campo rotulo="Quantas pessoas trabalham aí?" erro={erros.tamanho} grupo>
+                  <Opcoes<Tamanho>
+                    colunas={2}
+                    valor={tamanho}
+                    onChange={setTamanho}
+                    itens={TAMANHO_VALORES.map((v) => ({ valor: v, rotulo: TAMANHO_ROTULO[v] }))}
+                  />
+                </Campo>
+
+                <Campo rotulo="O que mais come o seu tempo hoje?" erro={erros.dor} grupo>
+                  <Opcoes<Dor>
+                    colunas={1}
+                    valor={dor}
+                    onChange={setDor}
+                    itens={DOR_VALORES.map((v) => ({ valor: v, rotulo: DOR_ROTULO[v] }))}
+                  />
+                </Campo>
+
+                <Campo rotulo="Quer conversar comigo sobre automatizar isso?" erro={erros.conversar} grupo>
+                  <Opcoes<boolean>
+                    colunas={2}
+                    valor={querConversar}
+                    onChange={setQuerConversar}
+                    itens={[
+                      { valor: true, rotulo: "Sim, quero conversar" },
+                      { valor: false, rotulo: "Agora não" },
+                    ]}
+                  />
+                </Campo>
+              </>
             )}
 
-            <Campo rotulo="WhatsApp com DDD (opcional)" erro={erros.whatsapp}>
+            <Campo rotulo={temEmpresa && querConversar ? "WhatsApp com DDD" : "WhatsApp com DDD (opcional)"} erro={erros.whatsapp}>
               <input className="isca-in" type="tel" inputMode="tel" autoComplete="tel" placeholder="(11) 91234-5678" value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} />
+              {temEmpresa && querConversar && <span style={s.suave}>É por esse número que eu te chamo.</span>}
             </Campo>
 
             <Aceite marcado={aceite} onChange={setAceite} texto={textoAceite} erro={erros.aceite} />
@@ -179,7 +276,7 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
             {urlEntrega ? (
               <>
                 <a href={urlEntrega} className="isca-btn" style={{ textAlign: "center", textDecoration: "none" }}>
-                  {palavra === "TABELA" ? "Abrir a tabela das IAs" : `Abrir ${titulo}`}
+                  {palavra === "TABELA" || palavra === "BIO" ? "Abrir a tabela das IAs" : `Abrir ${titulo}`}
                 </a>
                 <p style={s.p}>Também te mandei por e-mail. Se não chegar em 1 minuto, olha o Spam ou Promoções.</p>
               </>
@@ -188,18 +285,88 @@ export default function Captura({ palavra, titulo }: { palavra: string; titulo: 
                 <strong>{titulo}</strong> está indo pro seu e-mail. Se não aparecer em 2 minutos, confere a aba Promoções.
               </p>
             )}
-            <a href="https://instagram.com/kawan.labs" target="_blank" rel="noopener noreferrer" style={s.link}>
-              Me chama no direct: @kawan.labs
-            </a>
+
+            {conversa === "oferecer" && (
+              <div style={s.cartao}>
+                <strong style={{ fontSize: 17 }}>Tem empresa? Dá pra falar comigo direto.</strong>
+                {!pedindoZap ? (
+                  <button type="button" className="isca-opt" disabled={carregando} onClick={() => (temWhatsapp ? pedirConversa() : setPedindoZap(true))}>
+                    Quero conversar sobre automatizar minha empresa
+                  </button>
+                ) : (
+                  <form onSubmit={pedirConversa} noValidate style={s.form}>
+                    <Campo rotulo="WhatsApp com DDD" erro={erros.whatsapp}>
+                      <input className="isca-in" type="tel" inputMode="tel" autoComplete="tel" placeholder="(11) 91234-5678" value={zapConversa} onChange={(e) => setZapConversa(e.target.value)} autoFocus />
+                    </Campo>
+                    <Botao carregando={carregando}>Quero conversar</Botao>
+                  </form>
+                )}
+                {erros.geral && <Erro>{erros.geral}</Erro>}
+              </div>
+            )}
+            {conversa === "pedido" && (
+              <p style={s.p}>
+                <strong>Recebi seu pedido de conversa.</strong> Eu te chamo no WhatsApp em breve.
+              </p>
+            )}
           </div>
         )}
+
+        <Contato palavra={palavra} instagram={etapa === "pronto"} />
       </div>
     </main>
   );
 }
 
+/** Botão direto pro WhatsApp do Kawan, com mensagem pronta que já diz de onde a pessoa veio. */
+function Contato({ palavra, instagram }: { palavra: string; instagram?: boolean }) {
+  const href = linkWhatsapp(`Oi Kawan! Vim pelo Instagram (${palavra}) e queria conversar sobre IA na minha empresa.`);
+  return (
+    <div style={s.contato}>
+      <span style={s.contatoTexto}>Prefere falar direto?</span>
+      <a href={href} target="_blank" rel="noopener noreferrer" className="isca-zap">
+        <IconeWhatsapp />
+        Me chama no WhatsApp
+      </a>
+      {instagram && (
+        <a href="https://instagram.com/kawan.labs" target="_blank" rel="noopener noreferrer" style={s.link}>
+          Ou siga @kawan.labs no Instagram
+        </a>
+      )}
+    </div>
+  );
+}
+
+function Opcoes<T extends string | boolean>({
+  itens,
+  valor,
+  onChange,
+  colunas,
+}: {
+  itens: { valor: T; rotulo: string }[];
+  valor: T | null;
+  onChange: (v: T) => void;
+  colunas: 1 | 2;
+}) {
+  return (
+    <div style={{ display: "grid", gridTemplateColumns: `repeat(${colunas}, 1fr)`, gap: 10 }}>
+      {itens.map((i) => (
+        <button
+          key={String(i.valor)}
+          type="button"
+          className={`isca-opt${valor === i.valor ? " on" : ""}`}
+          aria-pressed={valor === i.valor}
+          onClick={() => onChange(i.valor)}
+        >
+          {i.rotulo}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 function Campo({ rotulo, erro, grupo, children }: { rotulo?: string; erro?: string; grupo?: boolean; children: React.ReactNode }) {
-  // grupo: div em vez de label, senão clicar no rótulo aciona o botão "Sim"
+  // grupo: div em vez de label, senão clicar no rótulo aciona o primeiro botão
   const Tag = grupo ? "div" : "label";
   return (
     <Tag style={{ display: "grid", gap: 6 }}>
@@ -249,7 +416,11 @@ const s: Record<string, React.CSSProperties> = {
   form: { display: "grid", gap: 18, position: "relative" },
   h1: { fontFamily: "Anton, Impact, sans-serif", fontWeight: 400, fontSize: 40, lineHeight: 1.2, margin: 0, textTransform: "uppercase" },
   p: { fontSize: 17, lineHeight: 1.5, margin: 0 },
-  link: { color: COR.texto, fontWeight: 600, fontSize: 16, textDecorationColor: COR.laranja, textUnderlineOffset: 4 },
+  contato: { display: "grid", gap: 12, paddingTop: 20, borderTop: `1px solid ${COR.borda}` },
+  contatoTexto: { fontSize: 15, color: COR.suave },
+  suave: { fontSize: 14, color: COR.suave },
+  cartao: { display: "grid", gap: 12, padding: 16, border: `1.5px solid ${COR.borda}`, borderRadius: 12, background: "#fff" },
+  link: { fontSize: 15, color: COR.texto, fontWeight: 600, textDecorationColor: COR.laranja, textUnderlineOffset: 4 },
 };
 
 const css = `
@@ -259,5 +430,8 @@ const css = `
   .isca-btn { font: inherit; font-weight: 700; font-size: 17px; padding: 16px; border: 0; border-radius: 12px; background: ${COR.texto}; color: #fff; cursor: pointer; }
   .isca-btn:disabled { opacity: .6; cursor: wait; }
   .isca-opt { font: inherit; font-weight: 600; font-size: 17px; padding: 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; cursor: pointer; }
+  .isca-opt:disabled { opacity: .6; cursor: wait; }
   .isca-opt.on { border-color: ${COR.laranja}; background: ${COR.laranja}; color: #fff; }
+  .isca-zap { display: flex; align-items: center; justify-content: center; gap: 10px; font: inherit; font-weight: 700; font-size: 17px; padding: 14px 16px; border: 1.5px solid ${COR.borda}; border-radius: 12px; background: #fff; color: ${COR.texto}; text-decoration: none; }
+  .isca-zap:hover { border-color: #25D366; }
 `;
