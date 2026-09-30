@@ -41,6 +41,10 @@ O app Next.js fica em `conteudo/` (é o root directory na Vercel).
 - Variáveis na Vercel: SUPABASE_URL, SUPABASE_SERVICE_KEY, APP_PASSWORD, GROQ_API_KEY, GROQ_MODEL, GROQ_VISION_MODEL (opcional), GEMINI_API_KEY, GEMINI_MODELS, OPENROUTER_API_KEY, OPENROUTER_MODELS, LLM_ORDER. Sem ANTHROPIC_API_KEY por enquanto (custo).
 - Só modelos grátis. Em 24/09: Groq gpt-oss-120b e Nemotron Super estáveis; Gemini 3.8 e GLM/Qwen grátis caem por lotação.
 
+## site/ (público)
+
+Projeto `kawanlabs` na Vercel (root `site`): captura de lead (`/isca/PALAVRA`) e a Tabela das IAs (`/tabela-ia`). A tabela lê `site/data/tabela-ia.json`; só esse arquivo muda no dia a dia, sempre por PR (preview da Vercel, merge = publica). Passo a passo em `site/data/ATUALIZAR.md`.
+
 ## Template (aprovado, não mudar sem pedido)
 
 Fundo off-white #F2F0EB, texto preto, laranja #E0521D só em grifo e destaque. Título Anton, corpo Inter. 7 slides. A fonte embutida não tem emoji nem alguns símbolos: o `specToHtml` remove/troca antes do render. Título com line-height 1.2 (menos que isso, o acento colide com a linha de cima).

@@ -1,0 +1,534 @@
+{
+  "atualizada_em": "2026-09-29",
+  "verificada_em": "2026-09-29",
+  "modelo_base": "gpt-6-luna",
+  "cambio": {
+    "brl_por_usd": 5.2204,
+    "iof": 0.035,
+    "data": "2026-09-29",
+    "fontes": [
+      "https://www.piranot.com.br/2026/09/29/noticias/economia/dolar-ptax-fecha-em-r-52204-nesta-terca-feira-veja-a-cotacao-oficial/",
+      "https://oantagonista.com.br/brasil/compras-internacionais-em-2026-veja-como-ficam-com-a-nova-taxa-do-iof/"
+    ]
+  },
+  "provedores": [
+    {
+      "id": "openai",
+      "nome": "ChatGPT",
+      "empresa": "OpenAI"
+    },
+    {
+      "id": "anthropic",
+      "nome": "Claude",
+      "empresa": "Anthropic"
+    }
+  ],
+  "planos": [
+    {
+      "id": "openai-free",
+      "provedor": "openai",
+      "nome": "Free",
+      "preco_brl_mes": 0,
+      "detalhe": "GPT-5.6 Luna no chat. GPT-6 Luna no app pro computador.",
+      "fontes": ["https://chatgpt.com/pricing", "https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "openai-go",
+      "provedor": "openai",
+      "nome": "Go",
+      "preco_brl_mes": 39.99,
+      "detalhe": "Mais limite que o Free. Cobrado em reais no Brasil.",
+      "fontes": [
+        "https://forbes.com.br/escolhas-do-editor/2025/10/openai-lanca-chatgpt-go-no-brasil-e-firma-parceria-inedita-com-o-nubank/",
+        "https://horadecodar.com.br/chatgpt-go/"
+      ],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "openai-plus",
+      "provedor": "openai",
+      "nome": "Plus",
+      "preco_usd_mes": 20,
+      "detalhe": "GPT-5.6 Sol no chat. Astra (com limite menor), 6.1 Sol, Sol e Luna no Work e no Codex.",
+      "fontes": ["https://chatgpt.com/pricing", "https://theaicareerlab.com/blog/chatgpt-pricing-plans-explained"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "openai-pro-100",
+      "provedor": "openai",
+      "nome": "Pro 100",
+      "preco_usd_mes": 100,
+      "detalhe": "Entrada do Pro, com Astra no chat. Sem o modo Ultrafast (mais velocidade).",
+      "fontes": ["https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers", "https://chatgpt.com/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "openai-pro-200",
+      "provedor": "openai",
+      "nome": "Pro 200",
+      "preco_usd_mes": 200,
+      "detalhe": "Mais limite que o Pro 100. A partir de 30/10, o limite no Work e no Codex cai de 20x para 10x o do Plus.",
+      "fontes": ["https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers", "https://thenextweb.com/news/openai-devday-pro-200-usage-cut-pro-500-plan"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "openai-pro-500",
+      "provedor": "openai",
+      "nome": "Pro 500",
+      "preco_usd_mes": 500,
+      "detalhe": "25x o limite do Plus. É o único com o modo Ultrafast (mais velocidade).",
+      "fontes": ["https://openai.com/index/devday-2026-recap/", "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-free",
+      "provedor": "anthropic",
+      "nome": "Free",
+      "preco_brl_mes": 0,
+      "detalhe": "Sonnet 5.5 no chat.",
+      "fontes": ["https://claude.com/pricing", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-pro",
+      "provedor": "anthropic",
+      "nome": "Pro",
+      "preco_usd_mes": 20,
+      "detalhe": "Sonnet 5.5 e Opus 5.5, com mais limite que o Free.",
+      "fontes": ["https://claude.com/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-max",
+      "provedor": "anthropic",
+      "nome": "Max",
+      "preco_usd_mes": 100,
+      "detalhe": "Escolhe entre 5x e 20x o limite do Pro. Inclui o Fable 5.1.",
+      "fontes": ["https://claude.com/pricing"],
+      "verificado_em": "2026-09-29",
+      "a_partir_de": true
+    }
+  ],
+  "modelos": [
+    {
+      "id": "gpt-5-6-luna",
+      "provedor": "openai",
+      "nome": "GPT-5.6 Luna",
+      "cargo": "Estagiária do grátis",
+      "status": "atual",
+      "descricao": "Padrão no ChatGPT Free e Go. Conversa do dia a dia.",
+      "plano_minimo": "openai-free",
+      "pill": "claro",
+      "fontes": ["https://chatgpt.com/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "gpt-6-luna",
+      "provedor": "openai",
+      "nome": "GPT-6 Luna",
+      "apelido": "Luna",
+      "cargo": "Estagiária",
+      "status": "atual",
+      "desde": "2026-09-22",
+      "preco_entrada_usd": 0.1,
+      "descricao": "Resumo, legenda, lista. De graça no app do ChatGPT pro computador.",
+      "onde": "Também no Work e no Codex, a partir do Plus.",
+      "plano_minimo": "openai-free",
+      "pill": "laranja",
+      "fontes": ["https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "gpt-5-6-sol",
+      "provedor": "openai",
+      "nome": "GPT-5.6 Sol",
+      "cargo": "Atendente (geração anterior)",
+      "status": "anterior",
+      "descricao": "Modelo do chat no Plus e no Pro.",
+      "plano_minimo": "openai-plus",
+      "pill": "claro",
+      "fontes": ["https://theaicareerlab.com/blog/chatgpt-pricing-plans-explained"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "gpt-6-sol",
+      "provedor": "openai",
+      "nome": "GPT-6 Sol",
+      "cargo": "Atendente",
+      "status": "atual",
+      "desde": "2026-09-22",
+      "preco_entrada_usd": 2,
+      "descricao": "Atendimento, código, trabalho do dia a dia pesado.",
+      "onde": "No Work e no Codex, a partir do Plus.",
+      "plano_minimo": "openai-plus",
+      "pill": "claro",
+      "fontes": ["https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "gpt-6-1-sol",
+      "provedor": "openai",
+      "nome": "GPT-6.1 Sol",
+      "cargo": "Atendente (nova, em teste)",
+      "status": "atual",
+      "desde": "2026-09-29",
+      "preco_entrada_usd": 2,
+      "descricao": "Lançada em 29/09, mesmo preço da Sol. Segundo a OpenAI, chega perto da Astra por um quinto do preço. Ainda sem teste independente.",
+      "onde": "No Work e no Codex, a partir do Plus. Ainda não no chat.",
+      "plano_minimo": "openai-plus",
+      "pill": "claro",
+      "fontes": ["https://openai.com/index/introducing-gpt-6-1-sol/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "gpt-6-astra",
+      "provedor": "openai",
+      "nome": "GPT-6 Astra",
+      "cargo": "Braçal cara",
+      "status": "atual",
+      "desde": "2026-09-03",
+      "preco_entrada_usd": 10,
+      "descricao": "Mexe no computador por você. A mais forte da OpenAI.",
+      "onde": "No Work e no Codex a partir do Plus, com limite menor. No chat, nos planos Pro.",
+      "plano_minimo": "openai-plus",
+      "pill": "cinza",
+      "fontes": ["https://openai.com/index/gpt-6-astra/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-haiku-4-5",
+      "provedor": "anthropic",
+      "nome": "Claude Haiku 4.5",
+      "cargo": "Triagem",
+      "status": "atual",
+      "preco_entrada_usd": 1,
+      "descricao": "Separar, classificar e extrair dado. Rápido e barato.",
+      "onde": "Mais usado em automação.",
+      "plano_minimo": "claude-free",
+      "pill": "claro",
+      "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-sonnet-5-5",
+      "provedor": "anthropic",
+      "nome": "Claude Sonnet 5.5",
+      "cargo": "Assistente",
+      "status": "atual",
+      "desde": "2026-09-28",
+      "preco_entrada_usd": 2,
+      "descricao": "Planilha, proposta, e-mail: quase igual ao Opus 5.5 em trabalho de escritório, segundo a Anthropic, pela metade do preço.",
+      "onde": "Lançado em 28/09. Já é o modelo do Claude grátis.",
+      "plano_minimo": "claude-free",
+      "pill": "claro",
+      "fontes": ["https://www.anthropic.com/claude-sonnet-5-5", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-sonnet-5",
+      "provedor": "anthropic",
+      "nome": "Claude Sonnet 5",
+      "cargo": "Assistente (anterior)",
+      "status": "anterior",
+      "preco_entrada_usd": 2,
+      "descricao": "O 5.5 custa o mesmo e gasta menos por tarefa.",
+      "plano_minimo": "claude-free",
+      "pill": "claro",
+      "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-opus-5",
+      "provedor": "anthropic",
+      "nome": "Claude Opus 5",
+      "cargo": "Analista antigo",
+      "status": "anterior",
+      "preco_entrada_usd": 5,
+      "descricao": "O 5.5 é mais novo e mais barato. Não tem motivo pra ficar nele.",
+      "plano_minimo": "claude-pro",
+      "pill": "preto",
+      "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://platform.claude.com/docs/en/about-claude/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-opus-5-5",
+      "provedor": "anthropic",
+      "nome": "Claude Opus 5.5",
+      "cargo": "Analista",
+      "status": "atual",
+      "desde": "2026-09-22",
+      "preco_entrada_usd": 4,
+      "descricao": "Trabalho longo e complicado. No dia a dia de escritório, o Sonnet 5.5 entrega quase igual pela metade do preço.",
+      "onde": "No Claude Pro e Max.",
+      "plano_minimo": "claude-pro",
+      "pill": "preto",
+      "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://platform.claude.com/docs/en/about-claude/pricing"],
+      "verificado_em": "2026-09-29"
+    },
+    {
+      "id": "claude-fable-5-1",
+      "provedor": "anthropic",
+      "nome": "Claude Fable 5.1",
+      "cargo": "Especialista caro",
+      "status": "atual",
+      "preco_entrada_usd": 10,
+      "descricao": "Trabalho longo e complexo, que leva horas.",
+      "onde": "No Claude Max.",
+      "plano_minimo": "claude-max",
+      "pill": "cinza",
+      "fontes": ["https://claude.com/pricing", "https://platform.claude.com/docs/en/about-claude/pricing"],
+      "verificado_em": "2026-09-29"
+    }
+  ],
+  "equipe": [
+    {
+      "modelo": "gpt-6-luna",
+      "cargo": "Estagiária",
+      "icone": "cafe",
+      "destaque": true,
+      "onde": "De graça no app do ChatGPT pro computador.",
+      "nao": "Não deixa sozinha com cliente irritado."
+    },
+    {
+      "modelo": "gpt-6-sol",
+      "cargo": "Atendente",
+      "icone": "fone",
+      "onde": "No ChatGPT pago ou ligada no WhatsApp da empresa.",
+      "nao": "Não pede proposta pra ela."
+    },
+    {
+      "modelo": "claude-opus-5-5",
+      "cargo": "Analista",
+      "icone": "grafico",
+      "onde": "No Claude pago ou ligado numa automação.",
+      "nao": "Não coloca pra responder \"qual o horário?\"."
+    },
+    {
+      "modelo": "gpt-6-astra",
+      "cargo": "Braçal",
+      "icone": "tela",
+      "onde": "No ChatGPT pago. Mexe no computador por você.",
+      "nao": "Só pro braçal que as outras não fazem."
+    }
+  ],
+  "tarefas": [
+    {
+      "id": "resumir",
+      "tarefa": "Resumir e-mail ou documento longo",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-luna",
+          "nota": "app pro computador"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "legenda",
+      "tarefa": "Escrever legenda de post",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-luna",
+          "nota": "app pro computador"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "organizar",
+      "tarefa": "Organizar lista ou limpar planilha simples",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-luna",
+          "nota": "app pro computador"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "duvida-repetida",
+      "tarefa": "Responder dúvida repetida no WhatsApp",
+      "sub": "horário, endereço, preço",
+      "tipo": "automacao",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-luna"
+        },
+        "anthropic": {
+          "modelo": "claude-haiku-4-5"
+        }
+      }
+    },
+    {
+      "id": "atender-whatsapp",
+      "tarefa": "Atender o WhatsApp o dia inteiro",
+      "sub": "agendar, orçamento padrão",
+      "tipo": "automacao",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-sol"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "cliente-irritado",
+      "tarefa": "Cliente irritado ou reclamação",
+      "sub": "cada palavra conta",
+      "tipo": "automacao",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-sol"
+        },
+        "anthropic": {
+          "modelo": "claude-opus-5-5"
+        }
+      }
+    },
+    {
+      "id": "proposta",
+      "tarefa": "Proposta comercial",
+      "sub": "o texto que fecha a venda",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-sol"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "planilha-vendas",
+      "tarefa": "Analisar a planilha de vendas",
+      "sub": "onde está perdendo dinheiro",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-sol"
+        },
+        "anthropic": {
+          "modelo": "claude-sonnet-5-5"
+        }
+      }
+    },
+    {
+      "id": "contrato",
+      "tarefa": "Revisar contrato ou documento importante",
+      "sub": "erro aqui custa caro",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-sol"
+        },
+        "anthropic": {
+          "modelo": "claude-opus-5-5"
+        }
+      }
+    },
+    {
+      "id": "cadastrar-site",
+      "tarefa": "Cadastrar produtos num site ou sistema",
+      "sub": "clicar igual gente",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-astra",
+          "nota": "Plus, no Work"
+        },
+        "anthropic": {
+          "rotulo": "Claude no Chrome",
+          "plano": "claude-pro",
+          "pill": "claro",
+          "fontes": ["https://support.claude.com/en/articles/12012173-get-started-with-claude-in-chrome"]
+        }
+      }
+    },
+    {
+      "id": "projeto-longo",
+      "tarefa": "Projeto longo, que leva horas",
+      "sub": "pesquisa grande, análise de muitos arquivos",
+      "tipo": "app",
+      "escolhas": {
+        "openai": {
+          "modelo": "gpt-6-astra",
+          "plano": "openai-pro-100"
+        },
+        "anthropic": {
+          "modelo": "claude-fable-5-1"
+        }
+      }
+    }
+  ],
+  "regras": [
+    {
+      "titulo": "Começa na Luna",
+      "texto": "Tudo que é repetido, curto ou só organiza informação."
+    },
+    {
+      "titulo": "Saiu fraco? Sobe",
+      "texto": "Se a resposta vier rasa, passa a mesma tarefa pro Sonnet 5.5. Ainda fraca, Opus 5.5."
+    },
+    {
+      "titulo": "Astra por último",
+      "texto": "Só quando precisa clicar num site ou sistema que não conversa com nada."
+    }
+  ],
+  "cta": {
+    "texto": "A Sol atende o WhatsApp o dia inteiro. Quando o cliente pede proposta, ela passa sozinha pro Opus, e você só aprova. É isso que eu monto nas empresas."
+  },
+  "mudancas": [
+    {
+      "data": "2026-09-29",
+      "tipo": "novo",
+      "titulo": "GPT-6.1 Sol chegou",
+      "detalhe": "Mesmo preço da Sol. Segundo a OpenAI, chega perto da Astra por um quinto do preço. Está no Work e no Codex, ainda não no chat.",
+      "fontes": ["https://openai.com/index/introducing-gpt-6-1-sol/"]
+    },
+    {
+      "data": "2026-09-29",
+      "tipo": "plano",
+      "titulo": "ChatGPT Pro agora tem 3 níveis",
+      "detalhe": "Pro 100, Pro 200 e Pro 500. Só o Pro 500 tem o modo Ultrafast (mais velocidade). A partir de 30/10, o limite do Pro 200 no Work e no Codex cai de 20x para 10x o do Plus.",
+      "fontes": [
+        "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers",
+        "https://thenextweb.com/news/openai-devday-pro-200-usage-cut-pro-500-plan",
+        "https://openai.com/index/devday-2026-recap/"
+      ]
+    },
+    {
+      "data": "2026-09-29",
+      "tipo": "correcao",
+      "titulo": "Preço do ChatGPT Go corrigido",
+      "detalhe": "No Brasil o Go é cobrado em reais: R$ 39,99. A versão anterior da tabela mostrava a conversão do dólar.",
+      "fontes": ["https://forbes.com.br/escolhas-do-editor/2025/10/openai-lanca-chatgpt-go-no-brasil-e-firma-parceria-inedita-com-o-nubank/"]
+    },
+    {
+      "data": "2026-09-28",
+      "tipo": "novo",
+      "titulo": "Claude Sonnet 5.5 chegou",
+      "detalhe": "Mesmo preço do Sonnet 5 e gasta menos por tarefa, segundo a Anthropic. Já é o modelo do Claude grátis.",
+      "fontes": ["https://www.anthropic.com/claude-sonnet-5-5", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"]
+    },
+    {
+      "data": "2026-09-22",
+      "tipo": "novo",
+      "titulo": "Claude Opus 5.5 e GPT-6 Sol e Luna chegaram",
+      "detalhe": "Segundo a Anthropic, o Opus 5.5 custa 40% menos que o Opus 5 numa tarefa típica. A OpenAI lançou a Sol e a Luna do GPT-6, com a Luna de graça no app do computador.",
+      "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://openai.com/index/introducing-gpt-6-sol-and-luna/"]
+    }
+  ]
+}
