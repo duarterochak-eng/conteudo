@@ -1,0 +1,17 @@
+body { margin: 0; background: #f2f0eb; }
+.en { background: #f2f0eb; color: #141210; font-family: var(--f-corpo), system-ui, sans-serif; font-size: 17px; line-height: 1.6; min-height: 100dvh; }
+.en *, .en *::before, .en *::after { box-sizing: border-box; }
+.en-caixa { max-width: 680px; margin: 0 auto; padding: 32px 20px 56px; }
+.en-marca { font-weight: 600; font-size: 14px; }
+.en-h1 { font-family: var(--f-titulo), Impact, sans-serif; font-weight: 400; text-transform: uppercase; font-size: clamp(36px, 8vw, 56px); line-height: 1.2; margin: 24px 0 8px; }
+.en-corpo h2, .en-corpo h3 { font-family: var(--f-titulo), Impact, sans-serif; font-weight: 400; line-height: 1.2; margin: 32px 0 0; }
+.en-corpo h2 { font-size: 30px; text-transform: uppercase; }
+.en-corpo h3 { font-size: 23px; }
+.en-corpo p, .en-corpo ul { margin: 16px 0 0; }
+.en-corpo ul { padding-left: 22px; }
+.en-corpo li + li { margin-top: 6px; }
+.en-codigo { margin: 20px 0 0; background: #141210; color: #f2f0eb; border-radius: 16px; padding: 20px; display: grid; gap: 16px; }
+.en-codigo pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; overflow-x: hidden; font: 15px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.en-codigo button { justify-self: start; min-height: 44px; min-width: 44px; padding: 0 20px; border: 0; border-radius: 12px; background: #e0521d; color: #141210; font: inherit; font-weight: 700; cursor: pointer; }
+.en-cta { margin-top: 48px; padding: 24px 20px; border: 1.5px solid #dcd7cb; border-radius: 16px; background: #f7f6f2; display: grid; gap: 14px; font-size: 19px; }
+.en-zap { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 12px; background: #141210; color: #f2f0eb; font-weight: 700; text-decoration: none; }
