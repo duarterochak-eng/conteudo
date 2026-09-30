@@ -342,6 +342,17 @@
   color: var(--lp-texto);
 }
 
+.lp-quem-sub {
+  margin: 8px 0 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--lp-apoio2);
+}
+.lp-texto strong {
+  color: var(--lp-texto);
+  font-weight: 700;
+}
+
 /* contato */
 .lp-contato .lp-btn {
   margin-top: 28px;
