@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { buscarIsca } from "@/lib/iscas";
+import { buscarIsca, type Isca } from "@/lib/iscas";
 import Captura, { type Capa } from "./isca/[palavra]/captura";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +14,13 @@ const CAPA: Capa = {
 };
 
 export default async function Home() {
-  // sem a isca BIO cadastrada (ou desligada), o link da bio continua indo pro Instagram
-  const isca = await buscarIsca("BIO");
+  // sem a isca BIO (não cadastrada, desligada) ou com o banco fora do ar, o link da bio continua indo pro Instagram
+  let isca: Isca | null = null;
+  try {
+    isca = await buscarIsca("BIO");
+  } catch (e) {
+    console.error("bio: busca da isca falhou", e);
+  }
   if (!isca) redirect("https://instagram.com/kawan.labs");
   return <Captura palavra={isca.palavra} titulo={isca.titulo} capa={CAPA} />;
 }
