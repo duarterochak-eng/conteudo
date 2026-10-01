@@ -15,3 +15,5 @@ body { margin: 0; background: #f2f0eb; }
 .en-codigo button { justify-self: start; min-height: 44px; min-width: 44px; padding: 0 20px; border: 0; border-radius: 12px; background: #e0521d; color: #141210; font: inherit; font-weight: 700; cursor: pointer; }
 .en-cta { margin-top: 48px; padding: 24px 20px; border: 1.5px solid #dcd7cb; border-radius: 16px; background: #f7f6f2; display: grid; gap: 14px; font-size: 19px; }
 .en-zap { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; padding: 0 16px; border-radius: 12px; background: #141210; color: #f2f0eb; font-weight: 700; text-decoration: none; }
+.ed-label { display: block; font-weight: 700; margin: 16px 0 8px; }
+.ed-ajustes { width: 100%; padding: 12px; border: 1.5px solid #dcd7cb; border-radius: 12px; background: #fff; font: 16px/1.5 inherit; font-family: inherit; resize: vertical; }
