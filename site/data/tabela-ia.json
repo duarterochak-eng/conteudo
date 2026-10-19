@@ -1,14 +1,14 @@
 {
-  "atualizada_em": "2026-09-29",
-  "verificada_em": "2026-09-29",
+  "atualizada_em": "2026-10-19",
+  "verificada_em": "2026-10-19",
   "modelo_base": "gpt-6-luna",
   "cambio": {
-    "brl_por_usd": 5.2204,
+    "brl_por_usd": 5.0826,
     "iof": 0.035,
-    "data": "2026-09-29",
+    "data": "2026-10-16",
     "fontes": [
-      "https://www.piranot.com.br/2026/09/29/noticias/economia/dolar-ptax-fecha-em-r-52204-nesta-terca-feira-veja-a-cotacao-oficial/",
-      "https://oantagonista.com.br/brasil/compras-internacionais-em-2026-veja-como-ficam-com-a-nova-taxa-do-iof/"
+      "https://www.piranot.com.br/2026/10/16/noticias/economia/dolar-ptax-fecha-em-r-50826-nesta-sexta-feira-16-10-2026-veja-a/",
+      "https://arqfinance.com/articles/tabela-atualizada-iof-cartao-credito/"
     ]
   },
   "provedores": [
@@ -29,9 +29,9 @@
       "provedor": "openai",
       "nome": "Free",
       "preco_brl_mes": 0,
-      "detalhe": "GPT-5.6 Luna no chat. GPT-6 Luna no app pro computador.",
-      "fontes": ["https://chatgpt.com/pricing", "https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
-      "verificado_em": "2026-09-29"
+      "detalhe": "GPT-6 Luna no chat e no app pro computador.",
+      "fontes": ["https://chatgpt.com/pricing", "https://openai.com/index/gpt-6-for-everyone/"],
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "openai-go",
@@ -50,9 +50,9 @@
       "provedor": "openai",
       "nome": "Plus",
       "preco_usd_mes": 20,
-      "detalhe": "GPT-5.6 Sol no chat. Astra (com limite menor), 6.1 Sol, Sol e Luna no Work e no Codex.",
-      "fontes": ["https://chatgpt.com/pricing", "https://theaicareerlab.com/blog/chatgpt-pricing-plans-explained"],
-      "verificado_em": "2026-09-29"
+      "detalhe": "GPT-6 Sol no chat. Astra (com limite menor), 6.1 Sol, Sol e Luna no Work e no Codex.",
+      "fontes": ["https://chatgpt.com/pricing", "https://openai.com/index/gpt-6-for-everyone/", "https://help.openai.com/en/articles/6950777-what-is-chatgpt-plus"],
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "openai-pro-100",
@@ -61,7 +61,7 @@
       "preco_usd_mes": 100,
       "detalhe": "Entrada do Pro, com Astra no chat. Sem o modo Ultrafast (mais velocidade).",
       "fontes": ["https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers", "https://chatgpt.com/pricing"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "openai-pro-200",
@@ -97,7 +97,7 @@
       "preco_usd_mes": 20,
       "detalhe": "Sonnet 5.5 e Opus 5.5, com mais limite que o Free.",
       "fontes": ["https://claude.com/pricing"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-max",
@@ -115,13 +115,13 @@
       "id": "gpt-5-6-luna",
       "provedor": "openai",
       "nome": "GPT-5.6 Luna",
-      "cargo": "Estagiária do grátis",
-      "status": "atual",
-      "descricao": "Padrão no ChatGPT Free e Go. Conversa do dia a dia.",
+      "cargo": "Estagiária do grátis (anterior)",
+      "status": "anterior",
+      "descricao": "Era o padrão do ChatGPT Free e Go até a GPT-6 Luna chegar ao chat, em 08/10.",
       "plano_minimo": "openai-free",
       "pill": "claro",
-      "fontes": ["https://chatgpt.com/pricing"],
-      "verificado_em": "2026-09-29"
+      "fontes": ["https://openai.com/index/gpt-6-for-everyone/"],
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "gpt-6-luna",
@@ -132,12 +132,12 @@
       "status": "atual",
       "desde": "2026-09-22",
       "preco_entrada_usd": 0.1,
-      "descricao": "Resumo, legenda, lista. De graça no app do ChatGPT pro computador.",
+      "descricao": "Resumo, legenda, lista. De graça no chat e no app do ChatGPT pro computador.",
       "onde": "Também no Work e no Codex, a partir do Plus.",
       "plano_minimo": "openai-free",
       "pill": "laranja",
       "fontes": ["https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "gpt-5-6-sol",
@@ -145,11 +145,11 @@
       "nome": "GPT-5.6 Sol",
       "cargo": "Atendente (geração anterior)",
       "status": "anterior",
-      "descricao": "Modelo do chat no Plus e no Pro.",
+      "descricao": "Era o modelo do chat no Plus e no Pro até a GPT-6 Sol chegar ao chat, em 07/10.",
       "plano_minimo": "openai-plus",
       "pill": "claro",
-      "fontes": ["https://theaicareerlab.com/blog/chatgpt-pricing-plans-explained"],
-      "verificado_em": "2026-09-29"
+      "fontes": ["https://openai.com/index/gpt-6-for-everyone/"],
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "gpt-6-sol",
@@ -164,7 +164,7 @@
       "plano_minimo": "openai-plus",
       "pill": "claro",
       "fontes": ["https://openai.com/index/introducing-gpt-6-sol-and-luna/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "gpt-6-1-sol",
@@ -179,7 +179,7 @@
       "plano_minimo": "openai-plus",
       "pill": "claro",
       "fontes": ["https://openai.com/index/introducing-gpt-6-1-sol/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "gpt-6-astra",
@@ -194,7 +194,7 @@
       "plano_minimo": "openai-plus",
       "pill": "cinza",
       "fontes": ["https://openai.com/index/gpt-6-astra/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-haiku-4-5",
@@ -208,7 +208,7 @@
       "plano_minimo": "claude-free",
       "pill": "claro",
       "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-sonnet-5-5",
@@ -223,7 +223,7 @@
       "plano_minimo": "claude-free",
       "pill": "claro",
       "fontes": ["https://www.anthropic.com/claude-sonnet-5-5", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-sonnet-5",
@@ -236,7 +236,7 @@
       "plano_minimo": "claude-free",
       "pill": "claro",
       "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-opus-5",
@@ -249,7 +249,7 @@
       "plano_minimo": "claude-pro",
       "pill": "preto",
       "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-opus-5-5",
@@ -264,7 +264,7 @@
       "plano_minimo": "claude-pro",
       "pill": "preto",
       "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-09-29"
+      "verificado_em": "2026-10-19"
     },
     {
       "id": "claude-fable-5-1",
@@ -491,6 +491,13 @@
     "texto": "A Sol atende o WhatsApp o dia inteiro. Quando o cliente pede proposta, ela passa sozinha pro Opus, e você só aprova. É isso que eu monto nas empresas."
   },
   "mudancas": [
+    {
+      "data": "2026-10-07",
+      "tipo": "novo",
+      "titulo": "GPT-6 chegou ao chat do ChatGPT",
+      "detalhe": "No Plus e no Pro o chat passa a usar a GPT-6 Sol. No Free e no Go, a GPT-6 Luna (a partir de 08/10). Work e Codex não mudam.",
+      "fontes": ["https://openai.com/index/gpt-6-for-everyone/"]
+    },
     {
       "data": "2026-09-29",
       "tipo": "novo",
