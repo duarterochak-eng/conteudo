@@ -1,13 +1,13 @@
 {
-  "atualizada_em": "2026-10-19",
-  "verificada_em": "2026-10-19",
+  "atualizada_em": "2026-11-02",
+  "verificada_em": "2026-11-02",
   "modelo_base": "gpt-6-luna",
   "cambio": {
-    "brl_por_usd": 5.0826,
+    "brl_por_usd": 5.4212,
     "iof": 0.035,
-    "data": "2026-10-16",
+    "data": "2026-10-30",
     "fontes": [
-      "https://www.piranot.com.br/2026/10/16/noticias/economia/dolar-ptax-fecha-em-r-50826-nesta-sexta-feira-16-10-2026-veja-a/",
+      "https://www.piranot.com.br/2026/10/30/noticias/economia/dolar-ptax-fecha-em-r-54212-nesta-sexta-feira-30-10-2026-veja-a/",
       "https://arqfinance.com/articles/tabela-atualizada-iof-cartao-credito/"
     ]
   },
@@ -61,53 +61,52 @@
       "preco_usd_mes": 100,
       "detalhe": "Entrada do Pro, com Astra no chat. Sem o modo Ultrafast (mais velocidade).",
       "fontes": ["https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers", "https://chatgpt.com/pricing"],
-      "verificado_em": "2026-10-19"
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "openai-pro-200",
       "provedor": "openai",
       "nome": "Pro 200",
       "preco_usd_mes": 200,
-      "detalhe": "Mais limite que o Pro 100. A partir de 30/10, o limite no Work e no Codex cai de 20x para 10x o do Plus.",
-      "fontes": ["https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers", "https://thenextweb.com/news/openai-devday-pro-200-usage-cut-pro-500-plan"],
-      "verificado_em": "2026-09-29"
+      "detalhe": "Plano do meio do Pro.",
+      "fontes": ["https://learn.chatgpt.com/docs/pricing"],
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "openai-pro-500",
       "provedor": "openai",
       "nome": "Pro 500",
       "preco_usd_mes": 500,
-      "detalhe": "25x o limite do Plus. É o único com o modo Ultrafast (mais velocidade).",
-      "fontes": ["https://openai.com/index/devday-2026-recap/", "https://help.openai.com/en/articles/9793128-about-chatgpt-pro-tiers"],
-      "verificado_em": "2026-09-29"
+      "detalhe": "É o único com o modo Ultrafast (mais velocidade).",
+      "fontes": ["https://learn.chatgpt.com/docs/pricing"],
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-free",
       "provedor": "anthropic",
       "nome": "Free",
       "preco_brl_mes": 0,
-      "detalhe": "Sonnet 5.5 no chat.",
-      "fontes": ["https://claude.com/pricing", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
-      "verificado_em": "2026-09-29"
+      "detalhe": "Claude grátis, com uso limitado.",
+      "fontes": ["https://claude.com/pricing"],
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-pro",
       "provedor": "anthropic",
       "nome": "Pro",
       "preco_usd_mes": 20,
-      "detalhe": "Sonnet 5.5 e Opus 5.5, com mais limite que o Free.",
-      "fontes": ["https://claude.com/pricing"],
-      "verificado_em": "2026-10-19"
+      "detalhe": "Opus, Fable e Claude no Chrome, com mais limite que o Free.",
+      "fontes": ["https://claude.com/pricing", "https://www.anthropic.com/claude/fable"],
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-max",
       "provedor": "anthropic",
       "nome": "Max",
       "preco_usd_mes": 100,
-      "detalhe": "Escolhe entre 5x e 20x o limite do Pro. Inclui o Fable 5.1.",
-      "fontes": ["https://claude.com/pricing"],
-      "verificado_em": "2026-09-29",
-      "a_partir_de": true
+      "detalhe": "5x o limite do Pro. Inclui o Fable 5.1.",
+      "fontes": ["https://claude.com/pricing", "https://support.claude.com/en/articles/11049741-what-is-the-max-plan", "https://www.anthropic.com/claude/fable"],
+      "verificado_em": "2026-11-02"
     }
   ],
   "modelos": [
@@ -208,7 +207,7 @@
       "plano_minimo": "claude-free",
       "pill": "claro",
       "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-10-19"
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-sonnet-5-5",
@@ -236,7 +235,7 @@
       "plano_minimo": "claude-free",
       "pill": "claro",
       "fontes": ["https://platform.claude.com/docs/en/about-claude/pricing", "https://simonwillison.net/2026/Sep/28/claude-sonnet-5-5/"],
-      "verificado_em": "2026-10-19"
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-opus-5",
@@ -249,7 +248,7 @@
       "plano_minimo": "claude-pro",
       "pill": "preto",
       "fontes": ["https://www.anthropic.com/claude-opus-5-5", "https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-10-19"
+      "verificado_em": "2026-11-02"
     },
     {
       "id": "claude-opus-5-5",
@@ -274,11 +273,11 @@
       "status": "atual",
       "preco_entrada_usd": 10,
       "descricao": "Trabalho longo e complexo, que leva horas.",
-      "onde": "No Claude Max.",
-      "plano_minimo": "claude-max",
+      "onde": "Nos planos Pro, Max e Ultra.",
+      "plano_minimo": "claude-pro",
       "pill": "cinza",
-      "fontes": ["https://claude.com/pricing", "https://platform.claude.com/docs/en/about-claude/pricing"],
-      "verificado_em": "2026-09-29"
+      "fontes": ["https://www.anthropic.com/claude/fable", "https://platform.claude.com/docs/en/about-claude/pricing"],
+      "verificado_em": "2026-11-02"
     }
   ],
   "equipe": [
@@ -491,6 +490,13 @@
     "texto": "A Sol atende o WhatsApp o dia inteiro. Quando o cliente pede proposta, ela passa sozinha pro Opus, e você só aprova. É isso que eu monto nas empresas."
   },
   "mudancas": [
+    {
+      "data": "2026-11-02",
+      "tipo": "correcao",
+      "titulo": "Claude Max e Fable 5.1 corrigidos",
+      "detalhe": "O Max é 5x o limite do Pro (não 5x a 20x), e existe o Ultra acima dele. O Fable 5.1 está disponível desde o Claude Pro.",
+      "fontes": ["https://support.claude.com/en/articles/11049741-what-is-the-max-plan", "https://www.anthropic.com/claude/fable"]
+    },
     {
       "data": "2026-10-07",
       "tipo": "novo",
