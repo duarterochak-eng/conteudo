@@ -1,13 +1,13 @@
 {
   "atualizada_em": "2026-11-02",
-  "verificada_em": "2026-11-02",
+  "verificada_em": "2026-11-09",
   "modelo_base": "gpt-6-luna",
   "cambio": {
-    "brl_por_usd": 5.4212,
+    "brl_por_usd": 5.5013,
     "iof": 0.035,
-    "data": "2026-10-30",
+    "data": "2026-11-06",
     "fontes": [
-      "https://www.piranot.com.br/2026/10/30/noticias/economia/dolar-ptax-fecha-em-r-54212-nesta-sexta-feira-30-10-2026-veja-a/",
+      "https://www.piranot.com.br/2026/11/06/noticias/economia/dolar-ptax-fecha-em-r-55013-nesta-sexta-feira-06-11-2026-veja-a/",
       "https://arqfinance.com/articles/tabela-atualizada-iof-cartao-credito/"
     ]
   },
